@@ -1,0 +1,160 @@
+body {
+      background-color: #f4f6f9;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .navbar-custom {
+      background: linear-gradient(90deg, #1f1f2e, #2e3a59);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .card-custom {
+      background: #ffffff;
+      color: #2c3e50;
+      border-radius: 15px;
+      border: none;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .section-box {
+      background-color: #f0f2f5;
+      color: #2e3a59;
+      border-radius: 12px;
+      padding: 25px;
+      border-left: 5px solid #003049;
+    }
+
+    .btn-elegant {
+      background: linear-gradient(90deg, #d4af37, #b8860b);
+      border: none;
+      color: #fff;
+      font-weight: bold;
+      padding: 14px 35px;
+      font-size: 1.1rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      transition: all 0.3s ease;
+    }
+
+    .btn-elegant:hover {
+      background: linear-gradient(90deg, #b8860b, #a87406);
+    }
+
+    .btn-green {
+      background: linear-gradient(90deg, #198754, #157347);
+      border: none;
+      color: #fff;
+      font-weight: bold;
+      padding: 14px 35px;
+      font-size: 1.1rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      transition: all 0.3s ease;
+    }
+
+    .btn-green:hover {
+      background: linear-gradient(90deg, #157347, #116938);
+    }
+
+    .title {
+      background: linear-gradient(90deg, #003049, #264653);
+      color: #ffffff;
+      padding: 25px;
+      border-radius: 12px;
+      font-size: 2.2rem;
+      font-weight: 700;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+    }
+
+    .icon-img {
+      width: 80px;
+      filter: grayscale(100%) brightness(1.1);
+    }
+
+    .admin-actions {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-top: 3rem;
+      flex-wrap: wrap;
+    }body {
+      background-color: #f4f6f9;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .navbar-custom {
+      background: linear-gradient(90deg, #1f1f2e, #2e3a59);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .card-custom {
+      background: #ffffff;
+      color: #2c3e50;
+      border-radius: 15px;
+      border: none;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .section-box {
+      background-color: #f0f2f5;
+      color: #2e3a59;
+      border-radius: 12px;
+      padding: 25px;
+      border-left: 5px solid #003049;
+    }
+
+    .btn-elegant {
+      background: linear-gradient(90deg, #d4af37, #b8860b);
+      border: none;
+      color: #fff;
+      font-weight: bold;
+      padding: 14px 35px;
+      font-size: 1.1rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      transition: all 0.3s ease;
+    }
+
+    .btn-elegant:hover {
+      background: linear-gradient(90deg, #b8860b, #a87406);
+    }
+
+    .btn-green {
+      background: linear-gradient(90deg, #198754, #157347);
+      border: none;
+      color: #fff;
+      font-weight: bold;
+      padding: 14px 35px;
+      font-size: 1.1rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      transition: all 0.3s ease;
+    }
+
+    .btn-green:hover {
+      background: linear-gradient(90deg, #157347, #116938);
+    }
+
+    .title {
+      background: linear-gradient(90deg, #003049, #264653);
+      color: #ffffff;
+      padding: 25px;
+      border-radius: 12px;
+      font-size: 2.2rem;
+      font-weight: 700;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+    }
+
+    .icon-img {
+      width: 80px;
+      filter: grayscale(100%) brightness(1.1);
+    }
+
+    .admin-actions {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-top: 3rem;
+      flex-wrap: wrap;
+    }
+
