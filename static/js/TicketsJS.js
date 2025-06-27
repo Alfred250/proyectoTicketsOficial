@@ -83,3 +83,9 @@ function comprobacionDatos(datos){
   }
   return true;
 }
+
+
+async function obtenerTicketsAdministrar(){
+  
+
+}
