@@ -22,7 +22,7 @@
         <ul class="nav nav-pills flex-column">
           <li class="nav-item mb-2">
             <div style="display: flex; align-items: center;">
-              <img src="/static/img/agregar.png" style="width: 24px; height: 24px; margin-right: 8px;">
+              <img src="/static/img/agregar.png" style="width: 24px; height: 24px; margin-right: 8px;" title="agregar">
               <button onclick="miFuncion()" style="background: none; border: none; padding: 0; color: white; cursor: pointer;">
                 Crear ticket
               </button>
@@ -32,7 +32,7 @@
 
           <li class="nav-item mb-2">
             <div style="display: flex; align-items: center;">
-              <img src="/static/img/rechazar.png" style="width: 24px; height: 24px; margin-right: 8px;">
+              <img src="/static/img/rechazar.png" style="width: 24px; height: 24px; margin-right: 8px;" title="rechazar">
               <button onclick="miFuncion()" style="background: none; border: none; padding: 0; color: white; cursor: pointer;">
                 Tickets Asignados
               </button>
@@ -40,7 +40,7 @@
 
           <li class="nav-item mb-2">
             <div style="display: flex; align-items: center;">
-              <img src="/static/img/ajustes.png" style="width: 24px; height: 24px; margin-right: 8px;">
+              <img src="/static/img/ajustes.png" style="width: 24px; height: 24px; margin-right: 8px;" title="ajuste">
               <button onclick="miFuncion()" style="background: none; border: none; padding: 0; color: white; cursor: pointer;">
                 Gestionar ticket
               </button>
@@ -48,14 +48,14 @@
           </li>
           <li class="nav-item mb-2">
             <div style="display: flex; align-items: center;">
-              <img src="/static/img/kyc.png" style="width: 24px; height: 24px; margin-right: 8px;">
+              <img src="/static/img/kyc.png" style="width: 24px; height: 24px; margin-right: 8px;" title="imagen">
               <button onclick="miFuncion()" style="background: none; border: none; padding: 0; color: white; cursor: pointer;">
                 Tickets Aceptados
               </button>
           </li>
           <li class="nav-item mb-2">
             <div style="display: flex; align-items: center;">
-              <img src="/static/img/rechazar.png" style="width: 24px; height: 24px; margin-right: 8px;">
+              <img src="/static/img/rechazar.png" style="width: 24px; height: 24px; margin-right: 8px;" title="rechazar">
               <button onclick="miFuncion()" style="background: none; border: none; padding: 0; color: white; cursor: pointer;">
                 Tickets Rechazados
               </button>
@@ -76,14 +76,14 @@
 
             <div class="row">
               <div class="form-group col-6 mb-3">
-                <label for="selectTipo">Departamento</label>
-                <select class="form-control" id="selectTipo">
+                <label for="selectDepartamento">Departamento</label>
+                <select class="form-control" id="selectDepartamento">
                   <option selected>Selecciona una opción</option>
-                </select>
+              </select>
               </div>
               <div class="form-group col-6 mb-3">
-                <label for="selectCategoria">Problematicas</label>
-                <select class="form-control" id="selectCategoria">
+                <label for="selectProblematicas">Problematicas</label>
+                <select class="form-control" id="selectProblematicas">
                   <option selected>Selecciona una opción</option>
                 </select>
               </div>
@@ -91,9 +91,12 @@
 
             <div class="row">
               <div class="form-group col-12">
-                <label for="floatingTextarea">Especificaciones</label>
-                <textarea class="form-control" id="floatingTextarea"></textarea>
+                <label for="txtEspecificaciones">Especificaciones</label>
+                <textarea class="form-control" id="txtEspecificaciones"></textarea>
               </div>
+            </div>
+            <div class="row" style="padding: 1em; align-content:center; display:grid">
+              <button type="button" class="btn btn-primary" id="btnGenerarTicket">Generar Ticket</button>
             </div>
               
             <div class="row">

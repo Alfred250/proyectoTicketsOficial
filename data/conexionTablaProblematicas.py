@@ -3,24 +3,20 @@ import sqlite3 as sql
 
 class ConexionTablaProblematicas:
     
-    def selectProblematicas():
+    def selectProblematicas(self,departamento):
         try:
             with sql.connect("BD_MesadeAyuda.db") as conexion:
                 cursor= conexion.cursor()
-                cursor.execute("SELECT * FROM asuntos")
-                resultado= cursor.fetchall() 
-                cursor.execute("PRAGMA table_info('tickets')")
-                columnas_info = cursor.fetchall()
-                nombres_columnas = [col[1] for col in columnas_info]    #convierte directamente los datos en diccionaarios
-                lista_tickets = []
-                for fila in resultado:
-                    diccionario_fila = dict(zip(nombres_columnas, fila))
-                    lista_tickets.append(diccionario_fila)
+                cursor.execute('SELECT id_asunto,titulo FROM asuntos WHERE departamento=?',[departamento])  # Asegúrate que estos campos existen
+                resultado = cursor.fetchall()
+                diccionario_resultado = {str(fila[0]): fila[1] for fila in resultado}
+
+                return diccionario_resultado
         except sql.OperationalError as e:
             print("No se puedo crear la conexion")
             return {"Error":e}
     
-    def insertarProblematicas(departamento,titulo):
+    def insertarProblematicas(self,departamento,titulo):
         try:
             with sql.connect("BD_MesadeAyuda.db") as conexion:
                 cursor=conexion.cursor()

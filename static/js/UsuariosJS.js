@@ -20,30 +20,30 @@ $( document ).ready(function() {
 
 $("#btnReg").click(async function(){
     var nIdEmpleado=  document.getElementById("txtUsuario");
-        var sPassword = document.getElementById("txtPassword");
-        try {
-        const response = await fetch("/regUsuario", {
-            method: "POST",
-            headers: {
-            "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ nIdEmpleado: nIdEmpleado.value, cPassword: sPassword.value })
-        });
+    var sPassword = document.getElementById("txtPassword");
+    try {
+      const response = await fetch("/regUsuario", {
+          method: "POST",
+          headers: {
+          "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ nIdEmpleado: nIdEmpleado.value, cPassword: sPassword.value })
+      });
 
-        if (response.ok) {
-            console.log("Usuario registrado correctamente");
-            const data = await response.json();
-            alert(data.mensaje);
-        } else {
-            console.error("Error al registrar el usuario");
-            const error = await response.json();
-            console.log(error);
-            alert("Error: " + error.detail);
-        }
-        } catch (err) {
-        alert("Error al conectarse con el servidor.");
-        console.error(err);
-        }
+      if (response.ok) {
+          console.log("Usuario registrado correctamente");
+          const data = await response.json();
+          alert(data.mensaje);
+      } else {
+          console.error("Error al registrar el usuario");
+          const error = await response.json();
+          console.log(error);
+          alert("Error: " + error.detail);
+      }
+    } catch (err) {
+    alert("Error al conectarse con el servidor.");
+    console.log(err);
+    }
 });
 
 $("#btnRegresar").click(function(){

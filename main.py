@@ -44,19 +44,28 @@ def mostrar_menu():
 
 @app.post('/regUsuario', tags=["reg"])
 def registrar_usuario(datos: RegistrarUsuario):
-    dataUser= DataBaseUser()
-    Usuarios= dataUser.selectUsuarios()
-    usuario_existe_antes = datos.nIdEmpleado in Usuarios
-    IdEmpleado=int(datos.nIdEmpleado)
+    print(">>> Llegó solicitud de registro:", datos)
+    dataUser = DataBaseUser()
+    Usuarios = dataUser.selectUsuarios()
+    try:
+        IdEmpleado = int(datos.nIdEmpleado)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="El ID de empleado debe ser un número entero")
+
+    usuario_existe_antes = IdEmpleado in Usuarios
+    usuario_existe_despues = False 
     if not usuario_existe_antes:
         dataUser.insertarUsuario(IdEmpleado, datos.cPassword)
         Usuarios = dataUser.selectUsuarios()
-        usuario_existe_despues = datos.nIdEmpleado in Usuarios
-
+        usuario_existe_despues = IdEmpleado in Usuarios
+    else:
+        raise HTTPException(status_code=409, detail="El usuario ya existe") 
     if usuario_existe_despues:
         return {"mensaje": "Registro exitoso"}
     else:
-        raise HTTPException(status_code=404, detail="No se pudo registrar")
+        raise HTTPException(status_code=500, detail="No se pudo registrar por un error interno")
+
+
   
     
 @app.get("/mostrarUsuario", tags=["reg"])
