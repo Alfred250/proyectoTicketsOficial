@@ -18,7 +18,6 @@ async function consultarDepartamentos() {
 
 $("#selectDepartamento").on("change",function(){
   var depaSeleccionado=parseInt(this.value);
-  console.log(depaSeleccionado)
   consultarProblematicas(depaSeleccionado)
 })
 
@@ -45,21 +44,18 @@ async function consultarProblematicas(departamento) {
 }
 
 $("#btnGenerarTicket").click(async function(){
-  var departamento= $("#selectDepartamento").val();
-  var problematica= $("#selectProblematicas").val();
+  var problematica= parseInt($("#selectProblematicas").val());
   var especificaciones= $("#txtEspecificaciones").val();
   const idEmpleadoGlobal = parseInt(localStorage.getItem("idEmpleadoGlobal"));
 
+  console.log(problematica)
   var oRegistrarTicket={
     id_empleado:idEmpleadoGlobal,
-    problematica: problematica,
-    especificaciones:especificaciones
+    asunto: problematica,
+    descripcion:especificaciones
   }
-  var datos=[]
-  datos=[departamento,problematica,especificaciones]
-  var result=comprobacionDatos(datos )
-console.log(oRegistrarTicket)
-  if(result){
+  //var result=comprobacionDatos(datos )
+  //if(result){
     try{
       var response= await fetch('/registrarTicket',{
         method:"POST",
@@ -71,10 +67,11 @@ console.log(oRegistrarTicket)
       if (response.ok){
         console.log("va si se inserto")
       }
-    }catch{
-
+    }catch (err){
+      alert("Error al conectarse con el servidor.");
+      console.log(err);
     }
-  }
+  //}
 })
 
 

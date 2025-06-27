@@ -1,4 +1,6 @@
 import sqlite3 as sql
+import datetime
+from datetime import datetime, date
 
 class Base:
     def crearBD():
@@ -68,14 +70,14 @@ class Base:
             conexion.commit()
             conexion.close()
 
-    def borrar_Tabla():
+    def borrar_Tabla(self):
             conexion= sql.connect("BD_MesadeAyuda.db")
             #Manipular una Tabla
             cursor= conexion.cursor()
             cursor.execute(
                 #docString
                 """ 
-                    DROP TABLE ticketaceptado
+                    DROP TABLE empleados
                 """
             )
             conexion.commit()
@@ -92,14 +94,14 @@ class Base:
                         empleado_id INTEGER NOT NULL , 
                         password TEXT NOT NULL,
                         FOREIGN KEY (empleado_id) REFERENCES empleados(id_empleado)
-
+ 
                     )
                 """
             )
             conexion.commit()
             conexion.close()
 
-    def crearTabla_Empleados():
+    def crearTabla_Empleados(self):
             conexion= sql.connect("BD_MesadeAyuda.db")
             #Manipular una Tabla
             cursor= conexion.cursor()
@@ -136,7 +138,7 @@ class Base:
             conexion.commit()
             conexion.close()
 
-    def crearTabla_Puestos():
+    def crearTabla_Puestos(self):
             conexion= sql.connect("BD_MesadeAyuda.db")
             #Manipular una Tabla
             cursor= conexion.cursor()
@@ -178,71 +180,34 @@ class Base:
             conexion.close()
         
         
-    def crearRegistros():
+    def crearRegistros(self):
             departamentos = [("Recursos Humanos",), ("Finanzas",), ("Marketing",),
                             ("Ventas",),("Tecnología",),("Logística",),
                             ("Producción",),("Calidad",),("Investigación y Desarrollo",),
                             ("Atención al Cliente",),("Compras",),("Legal",),
                             ("Sistemas",),("Comunicación",),("Administración",),]
 
-            puestos= [("Gerente de RR.HH",1),
-                    ("Asistente de RR.HH",1),
-
-                    ("Contador Senior",2),
-                    ("Analista Financiero",2),
-
-                    ("Especialista en Publicidad",3),
-                    ("Diseñador Gráfico",3),
-
-                    ("Ejecutivo de Ventas",4),
-                    ("Representante Comercial",4),
-
-                    ("Desarrollador Backend",5),
-                    ("Administrador de Bases de Datos",5),
-
-                    ("Coordinador de Logística",6),
-                    ("Operador de Inventario",6),
-
-                    ("Supervisor de Producción",7),
-                    ("Técnico de Mantenimiento",7),
-
-                    ("Insepector de Calidad",8),
-                    ("Analista de Calidad",8),
-
-                    ("Investigador de Mercado",9),
-                    ("Científico de Datos",9),
-
-                    ("Representante de Atención",10),
-                    ("Supervisor de Call Center",10),
-
-                    ("Encargado de Compras",11),
-
-                    ("Asesor Legal",12),
-
-                    ("Administrador de Sistemas",13),
-
-                    ("Especialista en Comunicación",14),
-
-                    ("Administrador General",15),
-                    ]
+            puestos= [('Gerente de RRHH', 1),('Especialista en Reclutamiento', 1),('Analista de Nóminas', 1),
+                      ('Contador General', 2),('Analista Financiero', 2),('Tesorero', 2),
+                      ('Gerente de Marketing', 3),('Especialista en Marketing Digital', 3),('Diseñador Gráfico', 3),
+                      ('Gerente de Ventas', 4),('Ejecutivo de Cuentas', 4),('Representante de Ventas Internas', 4),
+                      ('Desarrollador de Software', 5),('Ingeniero de Soporte Técnico', 5),('Administrador de Bases de Datos', 5),
+                      ('Gerente de Logística', 6),('Coordinador de Almacén', 6),('Planificador de Rutas', 6),
+                      ('Gerente de Producción', 7),('Supervisor de Línea', 7),('Operador de Maquinaria', 7),
+                      ('Gerente de Calidad', 8),('Inspector de Control de Calidad', 8),('Analista de Procesos', 8),
+                      ('Científico de I+D', 9),('Ingeniero de Producto', 9),('Técnico de Laboratorio', 9),
+                      ('Gerente de Atención al Cliente', 10),('Agente de Soporte', 10),('Especialista en Experiencia del Cliente', 10),
+                      ('Gerente de Compras', 11),('Analista de Abastecimiento', 11),('Comprador Junior', 11),
+                      ('Asesor Jurídico', 12),('Paralegal', 12),('Especialista en Cumplimiento Normativo', 12),
+                      ('Administrador de Sistemas', 13),('Ingeniero de Redes', 13),('Analista de Seguridad Informática', 13),
+                      ('Gerente de Comunicaciones', 14),('Especialista en Relaciones Públicas', 14),('Redactor de Contenidos', 14),
+                    ('Gerente Administrativo', 15),('Asistente Administrativo', 15),('Recepcionista', 15)]
             
-            empleados= [('Carlos Ramírez', 3, 'Av. Reforma 123, CDMX', '5551234567', 'carlos.ramirez@email.com'),
-                        ('Laura González', 7, 'Calle 8 #45, Guadalajara', '3339876543', 'laura.gonzalez@email.com'),
-                        ('Jorge Martínez', 1, 'Blvd. Atlixco 567, Puebla', '2225556677', 'jorge.martinez@email.com'),
-                        ('Ana Torres', 5, 'Carr. Nacional 900, Monterrey', '8181122334', 'ana.torres@email.com'),
-                        ('Roberto Díaz', 12, 'Av. Las Torres 150, Toluca', '7224432111', 'roberto.diaz@email.com'),
-                        ('María López', 8, 'Calle Hidalgo 234, León', '4777766554', 'maria.lopez@email.com'),
-                        ('Daniela Herrera', 4, 'Paseo del Norte 321, Tijuana', '6643342211', 'daniela.herrera@email.com'),
-                        ('Luis Fernández', 10, 'Calzada del Sol 98, Mérida', '9994455667', 'luis.fernandez@email.com'),
-                        ('Elena Vargas', 15, 'Camino Real 456, Querétaro', '4427788990', 'elena.vargas@email.com'),
-                        ('Fernando Ríos', 2, 'Av. Universidad 1010, Aguascalientes', '4493322110', 'fernando.rios@email.com')]
-            
-            asuntos= [(13,"Reestablecer Contraseña"), (13,"Problema con Equipo"), (11,"Cotización"), (5,"Consulta") ]
+            asuntos= [(13, "Actualización de Software"), (13, "Solicitud de Acceso a Servidor"), (13, "Incidente de Seguridad"), (13, "Backup de Datos"), (13, "Configuración de Red"), (13, "Error en Aplicación Interna"), (13, "Mantenimiento Programado"), (13, "Solicitud de Nueva Cuenta"), (13, "Problemas con VPN"), (13, "Reporte de Caída del Sistema"), (13, "Configuración de Correo Electrónico"), (13, "Instalación de Antivirus"), (13, "Solicitud de Hardware"), (13, "Optimización de Base de Datos"),]
             tickets= [(1,2,'Laptop No Enciende, Ni Carga',0,'28/05/25', '29/05/25')]
 
             tickets_rechazados= [(3,'Ticket Repetido')]
 
-            empleado= [('Ulises Guerrero', 13, 'Blvd. Saturno 1010, León', '4779097173', 'Uligu@gmail.com')]
             tickets_aceptados=[(1,11,"Resuelto","29/05/25","30/05/2025")]
 
             conexion= sql.connect("BD_MesadeAyuda.db")
@@ -252,12 +217,17 @@ class Base:
             #cursor.executemany("INSERT INTO puestos (descripcion, departamento_id) VALUES (?, ?)", puestos)
             #cursor.executemany("INSERT INTO empleados (nombre, puesto, direccion, telefono, correo) VALUES (?, ?, ?, ?, ?)", empleados)
             #cursor.executemany("INSERT INTO asuntos (departamento, titulo) VALUES (?, ?)", asuntos)
+            cursor.execute("SELECT asuntos.titulo, departamentos.nombre FROM asuntos INNER JOIN departamentos ON departamentos.id_departamento = asuntos.departamento")
+            datos=cursor.fetchall()
+            for i in datos:
+                   print(i)
             #cursor.executemany("INSERT INTO tickets (id_empleado, asunto, descripcion, status, fecha_creacion, fecha_respuesta) VALUES (?, ?, ?, ?, ?, ?)", tickets)
             #cursor.executemany("INSERT INTO empleados (nombre, puesto, direccion, telefono, correo) VALUES (?, ?, ?, ?, ?)", empleado)
-            cursor.executemany("INSERT INTO ticketaceptado (ticket, empleado, situacion, fecha_resolucion, fecha_caducidad) VALUES (?, ?, ?, ?, ?)", tickets_aceptados)
+            #cursor.executemany("INSERT INTO ticketaceptado (ticket, empleado, situacion, fecha_resolucion, fecha_caducidad) VALUES (?, ?, ?, ?, ?)", tickets_aceptados)
             #cursor.executemany("INSERT INTO tickets_rechazados (id_ticket, motivo) VALUES (?, ?)", tickets_rechazados)
             conexion.commit()
             conexion.close()
+
     def consultar_empleados(self):
         conexion= sql.connect("BD_MesadeAyuda.db")
         cursor= conexion.cursor()
@@ -364,6 +334,7 @@ class Base:
            instruccion= f"SELECT departamentos.nombre, asuntos.titulo, tickets.descripcion, tickets_rechazados.fecha_respuesta, tickets_rechazados.motivo FROM tickets_rechazados INNER JOIN tickets ON tickets.id_ticket = tickets_rechazados.id_ticket INNER JOIN asuntos ON asuntos.id_asunto = tickets.asunto INNER JOIN empleados ON empleados.id_empleado = tickets.id_empleado INNER JOIN puestos ON puestos.id_puesto = empleados.puesto INNER JOIN departamentos ON departamentos.id_departamento = puestos.departamento_id"
            cursor.execute(instruccion)
            datos= cursor.fetchall()
+           print(datos)
            conexion.close()
            for i in datos:
                   conexion= sql.connect("BD_MesadeAyuda.db")
@@ -395,18 +366,98 @@ class Base:
                          if(e[0]==depto_destino):
                                 print(i)
 
-#basedatos= Base
-#basedatos.crearBD()
-#basedatos.crearTabla_Asuntos()
-#basedatos.crearTabla_Departamentos()
-#basedatos.crearTabla_Empleados()
-#basedatos.crearTabla_Puestos()
-#basedatos.crearTabla_Tickets()
-#basedatos.crearTabla_TicketsAceptados()
-#basedatos.crearTabla_TicketsRechazados()
-#basedatos.crearTabla_Usuarios()
+    def tickets_diarios(self):
+           conexion= sql.connect("BD_MesadeAyuda.db")
+           cursor= conexion.cursor()
+           instruccion= f"SELECT fecha_creacion, COUNT(*) as total FROM tickets GROUP BY fecha_creacion ORDER BY fecha_creacion;"
+           cursor.execute(instruccion)
+           datos= cursor.fetchall()
+           conexion.close()
+           for i in datos:
+                  print(i)
 
+    def tickets_diarios_deptos_origen(self):
+           conexion= sql.connect("BD_MesadeAyuda.db")
+           cursor= conexion.cursor()
+           instruccion= f"SELECT fecha_creacion,departamentos.nombre, COUNT(*) as total FROM tickets INNER JOIN empleados ON empleados.id_empleado = tickets.id_empleado INNER JOIN puestos ON puestos.id_puesto = empleados.puesto INNER JOIN departamentos ON departamentos.id_departamento = puestos.departamento_id GROUP BY fecha_creacion, departamentos.nombre ORDER BY fecha_creacion,departamentos.nombre;"
+           cursor.execute(instruccion)
+           datos= cursor.fetchall()
+           conexion.close()
+           for i in datos:
+                  print(i)
+    def tickets_diarios_deptos_destinados(self):
+           conexion= sql.connect("BD_MesadeAyuda.db")
+           cursor= conexion.cursor()
+           instruccion= f"SELECT fecha_creacion,departamentos.nombre , COUNT(*) as total FROM tickets INNER JOIN asuntos ON asuntos.id_asunto=tickets.asunto INNER JOIN departamentos ON departamentos.id_departamento = asuntos.departamento GROUP BY fecha_creacion, departamentos.nombre ORDER BY fecha_creacion,departamentos.nombre;"
+           cursor.execute(instruccion)
+           datos= cursor.fetchall()
+           conexion.close()
+           for i in datos:
+                  print(i)
+
+    def tickets_mesuales_origen(self):
+           conexion= sql.connect("BD_MesadeAyuda.db")
+           cursor= conexion.cursor()
+           instruccion= f"SELECT CASE strftime('%m', fecha_creacion) WHEN '01' THEN 'Enero' WHEN '02' THEN 'Febrero' WHEN '03' THEN 'Marzo' WHEN '04' THEN 'Abril' WHEN '05' THEN 'Mayo' WHEN '06' THEN 'Junio' WHEN '07' THEN 'Julio' WHEN '08' THEN 'Agosto' WHEN '09' THEN 'Septiembre' WHEN '10' THEN 'Octubre' WHEN '11' THEN 'Noviembre' WHEN '12' THEN 'Diciembre' END,strftime('%Y', fecha_creacion) ,departamentos.nombre, COUNT(*) as total FROM tickets INNER JOIN empleados ON empleados.id_empleado = tickets.id_empleado INNER JOIN puestos ON puestos.id_puesto = empleados.puesto INNER JOIN departamentos ON departamentos.id_departamento = puestos.departamento_id GROUP BY strftime('%m', fecha_creacion), strftime('%Y', fecha_creacion), departamentos.nombre ORDER BY fecha_creacion,departamentos.nombre;"
+           cursor.execute(instruccion)
+           conexion.commit()
+           datos= cursor.fetchall()
+           conexion.close()
+           for i in datos:
+                  print(i)
+    
+    def tickets_mensuales_destino(self):
+           conexion= sql.connect("BD_MesadeAyuda.db")
+           cursor= conexion.cursor()
+           instruccion= f"SELECT CASE strftime('%m',fecha_creacion) WHEN '01' THEN 'Enero' WHEN '02' THEN 'Febrero' WHEN '03' THEN 'Marzo' WHEN '04' THEN 'Abril' WHEN '05' THEN 'Mayo' WHEN '06' THEN 'Junio' WHEN '07' THEN 'Julio' WHEN '08' THEN 'Agosto' WHEN '09' THEN 'Septiembre' WHEN '10' THEN 'Octubre' WHEN '11' THEN 'Noviembre' WHEN '12' THEN 'Diciembre' END, strftime('%Y',fecha_creacion),departamentos.nombre , COUNT(*) as total FROM tickets INNER JOIN asuntos ON asuntos.id_asunto=tickets.asunto INNER JOIN departamentos ON departamentos.id_departamento = asuntos.departamento GROUP BY strftime('%m',fecha_creacion), departamentos.nombre ORDER BY fecha_creacion,departamentos.nombre;"
+           cursor.execute(instruccion)
+           datos= cursor.fetchall()
+           conexion.close()
+           for i in datos:
+                  print(i)
+
+    def borrar_datos(self):
+           conexion= sql.connect("BD_MesadeAyuda.db")
+           cursor= conexion.cursor()
+           instruccion= f"DELETE FROM tickets_rechazados"
+           cursor.execute(instruccion)
+           conexion.commit()
+           conexion.close()
+
+    def tickets_cad(self):
+           conexion= sql.connect("BD_MesadeAyuda.db")
+           cursor= conexion.cursor()
+           cursor.execute("SELECT tickets.id_ticket, tickets.descripcion, empleados.nombre, ticketaceptado.situacion,ticketaceptado.fecha_solucion ,tickets.fecha_creacion, ticketaceptado.fecha_respuesta, ticketaceptado.fecha_caducidad FROM ticketaceptado INNER JOIN empleados ON empleados.id_empleado= ticketaceptado.empleado INNER JOIN tickets ON tickets.id_ticket = ticketaceptado.ticket")
+           datos= cursor.fetchall()
+           conexion.close()
+           for i in datos:
+                  solucion= i[4]
+                  caducidad= i[7]
+                  solucion_date= datetime.strptime(solucion, '%Y-%m-%d').date()
+                  caducidad_date= datetime.strptime(caducidad, '%Y-%m-%d').date()
+                  if caducidad_date < solucion_date:
+                         print(i)
+
+    def tiempo_tickets(self,departamento):
+           conexion= sql.connect("BD_MesadeAyuda.db")
+           cursor= conexion.cursor()
+           instruccion= f"SELECT departamentos.nombre, ticketaceptado.fecha_respuesta, ticketaceptado.fecha_solucion FROM ticketaceptado INNER JOIN tickets ON tickets.id_ticket = ticketaceptado.ticket INNER JOIN asuntos ON asuntos.id_asunto=tickets.asunto INNER JOIN departamentos ON departamentos.id_departamento = asuntos.departamento WHERE departamentos.nombre= '{departamento}' "
+           cursor.execute(instruccion)
+           datos= cursor.fetchall()
+           conexion.close()
+           tiemporespuesta=0
+           for i in datos:
+                  respuesta= i[1]
+                  solucion= i[2]
+                  respuesta= datetime.strptime(respuesta, '%Y-%m-%d')
+                  solucion= datetime.strptime(solucion, '%Y-%m-%d')
+                  tiemporespuesta+= (solucion-respuesta).total_seconds() / 60    
+           print(tiemporespuesta)
+           promedio= round(tiemporespuesta / len(datos),2)
+           print(promedio)
+                  
     #insertar_ticket(3,1,"Olvide la Contraseña de Intranet",1,"05/06/25")
+    #insertar_ticket(7,1,"Las impresiones se quedan en espera",1,"2025-06-18")
     #insertar_ticket(5,2,"Cambio de Tóner",0,"05/06/25")
     #aceptar_ticket(1,11,"Resuelto","05/06/25","05/06/25","06/06/25")
     #rechazar_ticket(2,"Se llamara a proveedor","12/06/25")
@@ -414,6 +465,3 @@ class Base:
     #consultar_tickets_all()
     #consultar_tickets_rechazados()
     #consultar_tickets_aceptados()
-    
-#base= Base()
-#base.insertar_ticket(1,"problemas de red","no tengo internet en mi laptop",1,'12-10-04')
