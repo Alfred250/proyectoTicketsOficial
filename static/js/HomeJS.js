@@ -1,3 +1,4 @@
+ window.idEmpleadoGlobal=null;
 document.addEventListener("DOMContentLoaded", function () {
   const form = document.getElementById("loginForm");
 
@@ -18,6 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
       if (response.ok) {
         const data = await response.json();
         console.log("Login successful:", data);
+        localStorage.setItem("idEmpleadoGlobal", data.idLog);
         alert(data.idLog);
         window.location.href = "/menu";
       } else {

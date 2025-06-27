@@ -417,6 +417,3 @@ class Base:
     
 #base= Base()
 #base.insertar_ticket(1,"problemas de red","no tengo internet en mi laptop",1,'12-10-04')
-conexion = sql.connect("BD_MesadeAyuda.db")
-cursor= conexion.cursor()
-cursor.execute("DELETE FROM departamentos WHERE id_departamento!=1")

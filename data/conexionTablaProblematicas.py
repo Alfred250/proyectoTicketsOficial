@@ -7,9 +7,8 @@ class ConexionTablaProblematicas:
         try:
             with sql.connect("BD_MesadeAyuda.db") as conexion:
                 cursor= conexion.cursor()
-                cursor.execute("SELECT id_asunto,titulo FROM asuntos WHERE departamento= ?",[departamento])  # Asegúrate que estos campos existen
+                cursor.execute('SELECT id_asunto,titulo FROM asuntos WHERE departamento=?',[departamento])  # Asegúrate que estos campos existen
                 resultado = cursor.fetchall()
-
                 diccionario_resultado = {str(fila[0]): fila[1] for fila in resultado}
 
                 return diccionario_resultado

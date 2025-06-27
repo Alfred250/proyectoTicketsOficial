@@ -7,18 +7,18 @@ async function consultarDepartamentos() {
   
   selectDepartamentos=document.getElementById("selectDepartamento");
   fetch('/filtroDepartamento').then(response => response.json()).then(data => {
-      var departamentosValues= Object.values(data);
-      departamentosValues.forEach(depa => {
-        var opcionDepas= document.createElement("option");
-        opcionDepas.value=Object.keys(data);
-        opcionDepas.text=depa;
+    for(var i in data){
+      var opcionDepas= document.createElement("option");
+        opcionDepas.value=i;
+        opcionDepas.text=data[i];
         selectDepartamentos.add(opcionDepas);
-      });
+    }
     });
 }
 
 $("#selectDepartamento").on("change",function(){
-  var depaSeleccionado=this.value;
+  var depaSeleccionado=parseInt(this.value);
+  console.log(depaSeleccionado)
   consultarProblematicas(depaSeleccionado)
 })
 
@@ -28,12 +28,61 @@ async function consultarProblematicas(departamento) {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ departamento })
+        body: JSON.stringify({ "id_departamento":departamento })
       });
 
       if (resultado.ok){
-        console.log(resultado)
+        var selectProblematicas= document.getElementById("selectProblematicas")
+        selectProblematicas.innerHTML=''
+        var datos= await resultado.json()
+        for(var i in datos){
+          var option= document.createElement('option');
+          option.value=i
+          option.text=datos[i]
+          selectProblematicas.add(option)
+        }
       }
-
 }
 
+$("#btnGenerarTicket").click(async function(){
+  var departamento= $("#selectDepartamento").val();
+  var problematica= $("#selectProblematicas").val();
+  var especificaciones= $("#txtEspecificaciones").val();
+  const idEmpleadoGlobal = parseInt(localStorage.getItem("idEmpleadoGlobal"));
+
+  var oRegistrarTicket={
+    id_empleado:idEmpleadoGlobal,
+    problematica: problematica,
+    especificaciones:especificaciones
+  }
+  var datos=[]
+  datos=[departamento,problematica,especificaciones]
+  var result=comprobacionDatos(datos )
+console.log(oRegistrarTicket)
+  if(result){
+    try{
+      var response= await fetch('/registrarTicket',{
+        method:"POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body:JSON.stringify(oRegistrarTicket)
+      })
+      if (response.ok){
+        console.log("va si se inserto")
+      }
+    }catch{
+
+    }
+  }
+})
+
+
+function comprobacionDatos(datos){
+  for (var i in datos){
+    if (datos[i].length === 0){
+      return false;
+    }
+  }
+  return true;
+}
