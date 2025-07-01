@@ -134,7 +134,7 @@ function mostrarApartado(idVista) {
 
 async function obtenerTicketsGenerados() {
   const id_empleado = parseInt(localStorage.getItem("idEmpleadoGlobal"));
-  console.log("ID empleado:", id_empleado);
+  console.log("ID empleado:", typeof(id_empleado));
 
   try {
     console.log("si entro")

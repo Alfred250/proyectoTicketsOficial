@@ -10,10 +10,9 @@ class ConexionTablaTickets:
         try:
             with sql.connect("BD_MesadeAyuda.db") as conexion:
                 cursor= conexion.cursor()
-                cursor.execute("SELECT * FROM tickets WHERE id_empleado=?",id_empleado)
+                cursor.execute("SELECT * FROM tickets WHERE id_empleado=?",[id_empleado])
                 resultado= cursor.fetchall()
-                diccionario_tickets={{fila[0]:fila[1] for fila in resultado}}
-                return diccionario_tickets
+                return resultado
         except sql.OperationalError as e:
             print("Error base de datos: ",e)
             return e
