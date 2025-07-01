@@ -15,7 +15,6 @@ class Problematica(BaseModel):
 def consultarDepartamentos():
     tDepartamentos= ConexionTablaDepartamento()
     datosDepartamentos=tDepartamentos.selectDepartamento()
-    print(datosDepartamentos)
     if datosDepartamentos:
         return JSONResponse(content=datosDepartamentos)
     else:

@@ -1,4 +1,4 @@
 from pydantic import BaseModel
 
-class IdUsuario:
+class IdUsuario(BaseModel):
     id_empleado:int 

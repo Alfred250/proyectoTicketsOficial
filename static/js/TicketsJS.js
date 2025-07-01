@@ -1,6 +1,7 @@
 $(document).ready(function(){
 
 consultarDepartamentos();
+obtenerTicketsGenerados();
 })
 
 async function consultarDepartamentos() {
@@ -112,13 +113,9 @@ function validarNoVacios(datos) {
 }
 
 
-//async function obtenerTicketsAdministrar(){
-  
 
-//}
 
 function mostrarApartado(idVista) {
-  // Lista de todas las secciones que pueden mostrarse/ocultarse
   const secciones = [
     "CrearTicket", 
     "Asignados", 
@@ -131,7 +128,34 @@ function mostrarApartado(idVista) {
     const elemento = document.getElementById(seccion);
     if (elemento) elemento.style.display = 'none';
   });
-
   const vistaActiva = document.getElementById(idVista);
   if (vistaActiva) vistaActiva.style.display = 'block';
+}
+
+async function obtenerTicketsGenerados() {
+  const id_empleado = parseInt(localStorage.getItem("idEmpleadoGlobal"));
+  console.log("ID empleado:", id_empleado);
+
+  try {
+    console.log("si entro")
+    console.log(id_empleado)
+    const response = await fetch(`/mostrarMisTickets?id_empleado=${id_empleado}`, {
+      method: "GET"
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      console.log("Tickets recibidos:", data);
+    } else {
+      console.error("Error al obtener tickets:", response.status);
+      
+    }
+  } catch (err) {
+    console.error("Error al conectar:", err);
+    Swal.fire({
+      icon: "error",
+      title: "Error de red",
+      text: "No se pudo conectar con el servidor."
+    });
+  }
 }
