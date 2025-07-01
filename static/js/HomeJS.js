@@ -1,4 +1,4 @@
- window.idEmpleadoGlobal=null;
+window.idEmpleadoGlobal=null;
 document.addEventListener("DOMContentLoaded", function () {
   const form = document.getElementById("loginForm");
 

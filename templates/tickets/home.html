@@ -23,7 +23,7 @@
           <li class="nav-item mb-2">
             <div style="display: flex; align-items: center;">
               <img src="/static/img/agregar.png" style="width: 24px; height: 24px; margin-right: 8px;" title="agregar">
-              <button onclick="miFuncion()" style="background: none; border: none; padding: 0; color: white; cursor: pointer;">
+              <button onclick="mostrarApartado('CrearTicket')" style="background: none; border: none; padding: 0; color: white; cursor: pointer;">
                 Crear ticket
               </button>
             </div>
@@ -33,7 +33,7 @@
           <li class="nav-item mb-2">
             <div style="display: flex; align-items: center;">
               <img src="/static/img/rechazar.png" style="width: 24px; height: 24px; margin-right: 8px;" title="rechazar">
-              <button onclick="miFuncion()" style="background: none; border: none; padding: 0; color: white; cursor: pointer;">
+              <button onclick="mostrarApartado('Asignados')" style="background: none; border: none; padding: 0; color: white; cursor: pointer;">
                 Tickets Asignados
               </button>
           </li>
@@ -41,7 +41,7 @@
           <li class="nav-item mb-2">
             <div style="display: flex; align-items: center;">
               <img src="/static/img/ajustes.png" style="width: 24px; height: 24px; margin-right: 8px;" title="ajuste">
-              <button onclick="miFuncion()" style="background: none; border: none; padding: 0; color: white; cursor: pointer;">
+              <button onclick="mostrarApartado('Administrar')" style="background: none; border: none; padding: 0; color: white; cursor: pointer;">
                 Gestionar ticket
               </button>
             </div>
@@ -49,14 +49,14 @@
           <li class="nav-item mb-2">
             <div style="display: flex; align-items: center;">
               <img src="/static/img/kyc.png" style="width: 24px; height: 24px; margin-right: 8px;" title="imagen">
-              <button onclick="miFuncion()" style="background: none; border: none; padding: 0; color: white; cursor: pointer;">
+              <button onclick="mostrarApartado('Aceptados')" style="background: none; border: none; padding: 0; color: white; cursor: pointer;">
                 Tickets Aceptados
               </button>
           </li>
           <li class="nav-item mb-2">
             <div style="display: flex; align-items: center;">
               <img src="/static/img/rechazar.png" style="width: 24px; height: 24px; margin-right: 8px;" title="rechazar">
-              <button onclick="miFuncion()" style="background: none; border: none; padding: 0; color: white; cursor: pointer;">
+              <button onclick="mostrarApartado('rechazados')" style="background: none; border: none; padding: 0; color: white; cursor: pointer;">
                 Tickets Rechazados
               </button>
           </li>
@@ -66,7 +66,7 @@
       <!-- Contenido principal -->
       <main class="col-md-8 col-lg-9 p-4 mb-2" id="mainTicket">
         <!-- Sección Crear Ticket -->
-        <div id="CrearTicket" class="mb-4 CrearT" >
+        <div id="CrearTicket" class="mb-4 CrearT"  >
           <div class="container">
             <div class="row mb-5">
               <div class="col-12"> 
@@ -388,6 +388,7 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   
   <script src="static/js/TicketsJS.js"></script>
 </body>
