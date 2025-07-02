@@ -1,6 +1,6 @@
 from fastapi import APIRouter,HTTPException
 from fastapi.responses import FileResponse,JSONResponse
-from data.conexionTablaTickets import  ConexionTablaTickets
+from data.ConexionTablaTickets import  ConexionTablaTickets
 from pydantic import BaseModel
 from models.ticketsModel import Ticket
 from datetime import datetime
