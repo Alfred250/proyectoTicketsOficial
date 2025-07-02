@@ -16,7 +16,6 @@ def mostrar_pagina_creacion_ticket():
 def insertar_tickets(datos:Ticket):
     conexionTablaTickets= ConexionTablaTickets()
     fecha_hoy=datetime.now().strftime("%Y-%m/-%d")
-    print(fecha_hoy)
     conexionTablaTickets.insertarTicket(datos.id_empleado,datos.asunto, datos.descripcion,1,fecha_hoy)
 
 
@@ -26,8 +25,19 @@ def mostrarTicketsEnviados(id_empleado:int):
     print(id_empleado)
     conexionTablaTickets= ConexionTablaTickets()
     datos=conexionTablaTickets.selectTicketsPropios(id_empleado)
-    print(datos)
     if datos:
         return JSONResponse(content=datos)
     else:
         raise HTTPException(status_code=404, detail="No se encontraron registro")
+
+@router.get("/administrarTickets", tags=["tickets"])
+def mostrarAdministrarTicket():
+    conexionTablaTickets= ConexionTablaTickets()
+    datos=conexionTablaTickets.selectTicketsAdministrar()
+    return JSONResponse(content=datos)
+
+@router.get("/asignarTicket", tags=["tickets"])
+def asignarTicket():
+    conexionTablaTickets= ConexionTablaTickets()
+    datos=conexionTablaTickets.selectTicketsAdministrar()
+    return JSONResponse(content=datos)
