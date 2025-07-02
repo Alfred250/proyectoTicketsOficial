@@ -1,6 +1,6 @@
 
 !requirements.txt
-!MdeAyuda.py
-!BD_MesadeAyuda.db
+MdeAyuda.py
+BD_MesadeAyuda.db
 __pycache__/
 *.pyc
