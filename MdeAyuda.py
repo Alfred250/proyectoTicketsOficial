@@ -2,6 +2,7 @@ import sqlite3 as sql
 import datetime
 from datetime import datetime, date
 import pandas as pd
+import json
 
 class Base:
     def crearBD():
@@ -526,6 +527,23 @@ class Base:
            instuccion= "SELECT tickets.id_ticket, tickets.descripcion, tickets_rechazados.motivo, tickets.fecha_creacion, tickets_rechazados.fecha_respuesta FROM tickets_rechazados INNER JOIN tickets ON tickets.id_ticket = tickets_rechazados.id_ticket"
            df= pd.read_sql_query(instuccion,conexion)
            df.to_excel('Tickets_Rechazados.xlsx',index=False)
+           
+    def selectTicketsAdministrar(self):
+        conexion= sql.connect("BD_MesadeAyuda.db")
+        cursor = conexion.cursor()
+        cursor.execute("""
+            SELECT A.id_ticket, A.Descripcion, D.nombre, C.nombre, B.titulo, A.fecha_creacion
+            FROM tickets A 
+            INNER JOIN asuntos B ON A.asunto = B.id_asunto 
+            INNER JOIN departamentos C ON B.departamento = C.id_departamento 
+            INNER JOIN empleados D ON A.id_empleado = D.id_empleado
+            WHERE A.Status =0""")
+        columnas = [desc[0] for desc in cursor.description]
+        resultado = cursor.fetchall()
+        resultado_json = [dict(zip(columnas, fila)) for fila in resultado]
+        return json.dumps(resultado_json, ensure_ascii=False)  
+        
+
     #insertar_ticket(3,1,"Olvide la Contraseña de Intranet",1,"05/06/25")
     #insertar_ticket(7,1,"Las impresiones se quedan en espera",1,"2025-06-18")
     #insertar_ticket(5,2,"Cambio de Tóner",0,"05/06/25")
