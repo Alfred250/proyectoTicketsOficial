@@ -168,6 +168,7 @@ async function obtenerTicketsGenerados() {
 
 async function obtenerAdministrarTicket(){
   try{
+    console.log(id_empleado)
     await fetch(`/administrarTickets?id_empleado=${id_empleado}`).then(response=>{
       if (!response.ok){
         throw new Error(`HTTP ERROR! status ${response.status}`)
