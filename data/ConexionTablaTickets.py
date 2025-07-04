@@ -34,17 +34,21 @@ class ConexionTablaTickets:
         conexionBaseDatos.insertar_ticket(id_empleado,asunto,descripcion,1,fecha_formateada)
         
 
-    def selectTicketsAdministrar(self):
+    def ticketsAdministrar(self,id_empleado):
+        conexionBaseDatos= Base()
+        return conexionBaseDatos.selectTicketsAdministrar(id_empleado)
+        
+        """
         try:
             with sql.connect("BD_MesadeAyuda.db") as conexion:
                 cursor = conexion.cursor()
-                cursor.execute("""
+                cursor.execute(
                     SELECT A.id_ticket, A.Descripcion, D.nombre, C.nombre, B.titulo, A.fecha_creacion
                     FROM tickets A 
                     INNER JOIN asuntos B ON A.asunto = B.id_asunto 
                     INNER JOIN departamentos C ON B.departamento = C.id_departamento 
                     INNER JOIN empleados D ON A.id_empleado = D.id_empleado
-                    WHERE A.Status =0""")
+                    WHERE A.Status =0)
                 columnas = [desc[0] for desc in cursor.description]
                 resultado = cursor.fetchall()
                 resultado_json = [dict(zip(columnas, fila)) for fila in resultado]
@@ -52,5 +56,6 @@ class ConexionTablaTickets:
         except sql.OperationalError as e:
             print("Error base de datos: ", e)
             return str(e)
+        """
         
     

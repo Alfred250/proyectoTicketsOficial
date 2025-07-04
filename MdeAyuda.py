@@ -1,6 +1,6 @@
 import sqlite3 as sql
 import datetime
-from datetime import datetime, date
+from datetime import datetime
 import pandas as pd
 import json
 
@@ -528,19 +528,20 @@ class Base:
            df= pd.read_sql_query(instuccion,conexion)
            df.to_excel('Tickets_Rechazados.xlsx',index=False)
            
-    def selectTicketsAdministrar(self):
+    def selectTicketsAdministrar(self,id_empleado):
         conexion= sql.connect("BD_MesadeAyuda.db")
         cursor = conexion.cursor()
         cursor.execute("""
-            SELECT A.id_ticket, A.Descripcion, D.nombre, C.nombre, B.titulo, A.fecha_creacion
+            SELECT A.id_ticket, A.Descripcion, D.nombre as empleado, C.nombre, B.titulo, A.fecha_creacion
             FROM tickets A 
             INNER JOIN asuntos B ON A.asunto = B.id_asunto 
-            INNER JOIN departamentos C ON B.departamento = C.id_departamento 
-            INNER JOIN empleados D ON A.id_empleado = D.id_empleado
-            WHERE A.Status =0""")
+            INNER JOIN departamentos C ON B.departamento = C.id_departamento
+            INNER JOIN empleados D ON A.id_empleado = D.id_empleado 
+            WHERE A.Status =2 and A.id_empleado=?""",[id_empleado])
         columnas = [desc[0] for desc in cursor.description]
         resultado = cursor.fetchall()
         resultado_json = [dict(zip(columnas, fila)) for fila in resultado]
+        print(resultado_json)
         return json.dumps(resultado_json, ensure_ascii=False)  
         
 

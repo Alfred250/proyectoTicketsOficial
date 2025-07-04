@@ -4,6 +4,7 @@ consultarDepartamentos();
 obtenerTicketsGenerados();
 obtenerAdministrarTicket();
 })
+const id_empleado = parseInt(localStorage.getItem("idEmpleadoGlobal"));
 
 async function consultarDepartamentos() {
   
@@ -131,7 +132,7 @@ function mostrarApartado(idVista) {
 }
 
 async function obtenerTicketsGenerados() {
-  const id_empleado = parseInt(localStorage.getItem("idEmpleadoGlobal"));
+  
 
   try {
     const response = await fetch(`/mostrarMisTickets?id_empleado=${id_empleado}`, {
@@ -167,12 +168,13 @@ async function obtenerTicketsGenerados() {
 
 async function obtenerAdministrarTicket(){
   try{
-    await fetch('/administrarTickets').then(response=>{
+    await fetch(`/administrarTickets?id_empleado=${id_empleado}`).then(response=>{
       if (!response.ok){
         throw new Error(`HTTP ERROR! status ${response.status}`)
       }
       return response.json()
     }).then(data=>{
+      console.log(data)
       var administrarJson= JSON.parse(data) 
       var bodyAdministrar= document.getElementById("divAdministrador");
       for(var i=0; i<administrarJson.length;i++){
@@ -235,3 +237,8 @@ async function obtenerAdministrarTicket(){
     });
   }
 }
+
+
+
+
+

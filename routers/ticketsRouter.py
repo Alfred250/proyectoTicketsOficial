@@ -31,13 +31,15 @@ def mostrarTicketsEnviados(id_empleado:int):
         raise HTTPException(status_code=404, detail="No se encontraron registro")
 
 @router.get("/administrarTickets", tags=["tickets"])
-def mostrarAdministrarTicket():
+def mostrarAdministrarTicket(id_empleado:int):
     conexionTablaTickets= ConexionTablaTickets()
-    datos=conexionTablaTickets.selectTicketsAdministrar()
+    datos=conexionTablaTickets.ticketsAdministrar(id_empleado)
     return JSONResponse(content=datos)
 
+"""
 @router.get("/asignarTicket", tags=["tickets"])
 def asignarTicket():
     conexionTablaTickets= ConexionTablaTickets()
-    datos=conexionTablaTickets.selectTicketsAdministrar()
+    datos=conexionTablaTickets.ticketsAdministrar()
     return JSONResponse(content=datos)
+    """
