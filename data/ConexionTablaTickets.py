@@ -36,7 +36,11 @@ class ConexionTablaTickets:
 
     def ticketsAdministrar(self,id_empleado):
         conexionBaseDatos= Base()
-        print("id empleado",id_empleado)
         ejecucion= conexionBaseDatos.consultar_tickets_pendientes(id_empleado)
         return ejecucion
        
+    def ticketsAceptados(self,id_empleado):
+        conexionBase= Base()
+        ejecucion= conexionBase.consultar_tickets_aceptados(id_empleado)
+        return ejecucion
+        

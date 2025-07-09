@@ -1,7 +1,7 @@
 import sqlite3 as sql
 import datetime
 from datetime import datetime, date
-import pandas as pd
+#import pandas as pd
 import json
 class Base:
     def crearBD():
@@ -305,7 +305,7 @@ class Base:
         datos=cursor.fetchall()
         for i in datos:
             departamento= i[0]
-        cursor.execute(f"SELECT tickets.id_ticket,asuntos.titulo, empleados.nombre, ticketaceptado.situacion,ticketaceptado.fecha_solucion ,tickets.fecha_creacion, ticketaceptado.fecha_respuesta, ticketaceptado.fecha_caducidad FROM ticketaceptado INNER JOIN tickets ON tickets.id_ticket = ticketaceptado.ticket INNER JOIN empleados ON empleados.id_empleado= ticketaceptado.empleado INNER JOIN asuntos ON asuntos.id_asunto = tickets.asunto INNER JOIN departamentos ON departamentos.id_departamento = asuntos.departamento WHERE departamentos.nombre='{departamento}'")
+        cursor.execute(f"SELECT tickets.id_ticket,asuntos.titulo,tickets.descripcion, empleados.nombre, ticketaceptado.situacion,ticketaceptado.fecha_solucion ,tickets.fecha_creacion, ticketaceptado.fecha_respuesta, ticketaceptado.fecha_caducidad FROM ticketaceptado INNER JOIN tickets ON tickets.id_ticket = ticketaceptado.ticket INNER JOIN empleados ON empleados.id_empleado= ticketaceptado.empleado INNER JOIN asuntos ON asuntos.id_asunto = tickets.asunto INNER JOIN departamentos ON departamentos.id_departamento = asuntos.departamento WHERE departamentos.nombre='{departamento}'")
         columnas = [desc[0] for desc in cursor.description]
         resultado = cursor.fetchall()
         resultado_json = [dict(zip(columnas, fila)) for fila in resultado]
@@ -429,25 +429,37 @@ class Base:
                          if(e[0]==depto_destino):
                                 print(i)
 
-    def tickets_diarios(self):
-           conexion= sql.connect("BD_MesadeAyuda.db")
-           cursor= conexion.cursor()
-           instruccion= f"SELECT fecha_creacion, departamentos.nombre, COUNT(*) as total FROM tickets INNER JOIN asuntos ON asuntos.id_asunto = tickets.asunto INNER JOIN departamentos ON departamentos.id_departamento = asuntos.departamento GROUP BY fecha_creacion, departamentos.nombre ORDER BY fecha_creacion;"
-           cursor.execute(instruccion)
-           datos= cursor.fetchall()
-           conexion.close()
-           for i in datos:
-                  print(i)
+    def tickets_diarios(self,fecha):
+        print("la fecha desde base", fecha)
+        conexion = sql.connect("BD_MesadeAyuda.db")
+        cursor = conexion.cursor()
+
+        cursor.execute("""
+            SELECT A.fecha_creacion, B.nombre, COUNT(*) as total
+            FROM tickets A
+            INNER JOIN asuntos C ON C.id_asunto = A.asunto
+            INNER JOIN departamentos B ON B.id_departamento = C.departamento
+            WHERE A.fecha_creacion = ?
+            GROUP BY A.fecha_creacion, B.nombre
+            ORDER BY A.fecha_creacion
+        """, (fecha,))
+        columnas = [desc[0] for desc in cursor.description]
+        resultado = cursor.fetchall()
+        resultado_json = [dict(zip(columnas, fila)) for fila in resultado]
+        conexion.close()
+        return json.dumps(resultado_json, ensure_ascii=False)
+
 
     def filtro_tickets_diarios_deptos_origen(self,mes,year):
            conexion= sql.connect("BD_MesadeAyuda.db")
            cursor= conexion.cursor()
            instruccion= f"SELECT fecha_creacion,departamentos.nombre, COUNT(*) as total FROM tickets INNER JOIN empleados ON empleados.id_empleado = tickets.id_empleado INNER JOIN puestos ON puestos.id_puesto = empleados.puesto INNER JOIN departamentos ON departamentos.id_departamento = puestos.departamento_id WHERE strftime('%m', fecha_creacion) = '{mes}' AND strftime('%Y', fecha_creacion) = '{year}' GROUP BY fecha_creacion, departamentos.nombre ORDER BY fecha_creacion,departamentos.nombre;"
            cursor.execute(instruccion)
-           datos= cursor.fetchall()
+           columnas=[desc[0] for desc in cursor.description]
+           resultado= cursor.fetchall()
+           resultado_json= [dict(zip(columnas,fila)) for fila in resultado]
            conexion.close()
-           for i in datos:
-                  print(i)
+           return json.dumps(resultado_json, ensure_ascii=False)
 
     def tickets_diarios_deptos_destinados(self):
            conexion= sql.connect("BD_MesadeAyuda.db")
@@ -502,21 +514,17 @@ class Base:
            conexion= sql.connect("BD_MesadeAyuda.db")
            cursor= conexion.cursor()
            cursor.execute("SELECT tickets.id_ticket, tickets.descripcion, empleados.nombre, ticketaceptado.situacion,ticketaceptado.fecha_solucion ,tickets.fecha_creacion, ticketaceptado.fecha_respuesta, ticketaceptado.fecha_caducidad FROM ticketaceptado INNER JOIN empleados ON empleados.id_empleado= ticketaceptado.empleado INNER JOIN tickets ON tickets.id_ticket = ticketaceptado.ticket")
-           datos= cursor.fetchall()
+           columnas= [col[0] for col in cursor.description]
+           datos=cursor.fetchall()
+           datos_json=[dict(zip(columnas,fila)) for fila in datos]
            conexion.close()
-           for i in datos:
-                  solucion= i[4]
-                  caducidad= i[7]
-                  solucion_date= datetime.strptime(solucion, '%Y-%m-%d')
-                  caducidad_date= datetime.strptime(caducidad, '%Y-%m-%d')
-                  if caducidad_date < solucion_date:
-                    if caducidad_date > datetime.strptime(fecha_inicio, '%Y-%m-%d') and caducidad_date < datetime.strptime(fecha_final, '%Y-%m-%d'):
-                        print(i)
+           return json.dumps(datos_json, ensure_ascii=False)
+           
 
     def tiempo_tickets(self,departamento, fecha_inicio, fecha_final):
            conexion= sql.connect("BD_MesadeAyuda.db")
            cursor= conexion.cursor()
-           instruccion= f"SELECT departamentos.nombre, ticketaceptado.fecha_respuesta, ticketaceptado.fecha_solucion FROM ticketaceptado INNER JOIN tickets ON tickets.id_ticket = ticketaceptado.ticket INNER JOIN asuntos ON asuntos.id_asunto=tickets.asunto INNER JOIN departamentos ON departamentos.id_departamento = asuntos.departamento WHERE departamentos.nombre= '{departamento}' "
+           instruccion= f"SELECT departamentos.nombre, ticketaceptado.fecha_respuesta, ticketaceptado.fecha_solucion FROM ticketaceptado INNER JOIN tickets ON tickets.id_ticket = ticketaceptado.ticket INNER JOIN asuntos ON asuntos.id_asunto=tickets.asunto INNER JOIN departamentos ON departamentos.id_departamento = asuntos.departamento WHERE departamentos.id_departamento= '{departamento}' "
            cursor.execute(instruccion)
            datos= cursor.fetchall()
            conexion.close()
@@ -534,9 +542,14 @@ class Base:
                         resueltos+=1
            print("Total del Tiempo de Respuesta: ", tiemporespuesta, " Minutos")  
            print("Total de Tickets Resueltos: ", resueltos)
-           promedio= round(tiemporespuesta / resueltos)
+           if resueltos>0:
+            promedio= round(tiemporespuesta / resueltos)
+           else:
+               promedio= tiemporespuesta
            print("Promedio de Tiempo de Respuesta:")
            print(promedio, "Minutos")
+           diccionario={"timepo_respuesta":tiemporespuesta,"resueltos":resueltos,"promedio":promedio}
+           return diccionario
                   
     def exportarTabla(self):
            conexion= sql.connect("BD_MesadeAyuda.db")
