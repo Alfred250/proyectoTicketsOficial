@@ -212,7 +212,11 @@ class Base:
                       ('Gerente de Comunicaciones', 14),('Especialista en Relaciones Públicas', 14),('Redactor de Contenidos', 14),
                     ('Gerente Administrativo', 15),('Asistente Administrativo', 15),('Recepcionista', 15)]
             
-            asuntos= [(13, "Actualización de Software"), (13, "Solicitud de Acceso a Servidor"), (13, "Incidente de Seguridad"), (13, "Backup de Datos"), (13, "Configuración de Red"), (13, "Error en Aplicación Interna"), (13, "Mantenimiento Programado"), (13, "Solicitud de Nueva Cuenta"), (13, "Problemas con VPN"), (13, "Reporte de Caída del Sistema"), (13, "Configuración de Correo Electrónico"), (13, "Instalación de Antivirus"), (13, "Solicitud de Hardware"), (13, "Optimización de Base de Datos"),]
+            asuntos= [(7,"Reporte de Incidencia en Línea de Producción"),(7,"Solicitud de Material/Componente"),(7,"Programación de Mantenimiento de Maquinaria"),
+                      (11,"Actualización de Datos de Proveedor"),(11,"Negociación de Términos con Proveedor"),(11,"Duda sobre Facturación de Proveedor"),
+                      (8,"Duda sobre Normativa"),(8,"Auditoría de Calidad Programada"),
+                      (6,"Solicitud de Información sobre Rutas/Costos"),(6,"Optimización de Cadena de Suministro"),(6,"Revisión de Inventario en Tránsito"),(6,"Coordinación de Entrega/Recolección")
+                      ]
             tickets= [(1,2,'Laptop No Enciende, Ni Carga',0,'28/05/25', '29/05/25')]
 
             tickets_rechazados= [(3,'Ticket Repetido')]
@@ -225,12 +229,12 @@ class Base:
             #cursor.executemany("INSERT INTO departamentos (nombre) VALUES (?)", departamentos)
             #cursor.executemany("INSERT INTO puestos (descripcion, departamento_id) VALUES (?, ?)", puestos)
             #cursor.executemany("INSERT INTO empleados (nombre, puesto, direccion, telefono, correo) VALUES (?, ?, ?, ?, ?)", empleados)
-            #cursor.executemany("INSERT INTO asuntos (departamento, titulo) VALUES (?, ?)", asuntos)
+            cursor.executemany("INSERT INTO asuntos (departamento, titulo) VALUES (?, ?)", asuntos)
             #cursor.execute("SELECT id_ticket, fecha_creacion FROM tickets WHERE status=2")
             #cursor.execute("SELECT * FROM ticketaceptado")
-            cursor.execute("SELECT tickets.id_ticket, tickets.descripcion, tickets.fecha_creacion FROM tickets WHERE tickets.status=1")
+            #cursor.execute("SELECT tickets.id_ticket, tickets.descripcion, tickets.fecha_creacion FROM tickets WHERE tickets.status=1")
             #cursor.execute("SELECT asuntos.id_asunto, departamentos.nombre, asuntos.titulo FROM asuntos INNER JOIN departamentos ON departamentos.id_departamento = asuntos.departamento")
-            #cursor.execute("SELECT asuntos.titulo, departamentos.nombre FROM asuntos INNER JOIN departamentos ON departamentos.id_departamento = asuntos.departamento")
+            cursor.execute("SELECT asuntos.titulo, departamentos.nombre FROM asuntos INNER JOIN departamentos ON departamentos.id_departamento = asuntos.departamento")
             datos=cursor.fetchall()
             for i in datos:
                    print(i)
@@ -239,7 +243,7 @@ class Base:
             #cursor.executemany("INSERT INTO empleados (nombre, puesto, direccion, telefono, correo) VALUES (?, ?, ?, ?, ?)", empleado)
             #cursor.executemany("INSERT INTO ticketaceptado (ticket, empleado, situacion, fecha_resolucion, fecha_caducidad) VALUES (?, ?, ?, ?, ?)", tickets_aceptados)
             #cursor.executemany("INSERT INTO tickets_rechazados (id_ticket, motivo) VALUES (?, ?)", tickets_rechazados)
-            #conexion.commit()
+            conexion.commit()
             conexion.close()
 
     def consultar_empleados(self):
@@ -263,7 +267,7 @@ class Base:
     def consultar_tickets_all(self):
         conexion= sql.connect("BD_MesadeAyuda.db")
         cursor= conexion.cursor()
-        cursor.execute("SELECT tickets.id_ticket, empleados.nombre, asuntos.titulo, tickets.descripcion, tickets.status, tickets.fecha_creacion FROM tickets INNER JOIN empleados ON empleados.id_empleado = tickets.id_empleado INNER JOIN asuntos ON asuntos.id_asunto = tickets.asunto")
+        cursor.execute("SELECT tickets.id_ticket, empleados.nombre, asuntos.titulo, tickets.descripcion, tickets.status, tickets.fecha_creacion FROM tickets INNER JOIN empleados ON empleados.id_empleado = tickets.id_empleado INNER JOIN asuntos ON asuntos.id_asunto = tickets.asunto WHERE status=1")
         datos= cursor.fetchall()
         conexion.close()
         for i in datos:
@@ -276,6 +280,7 @@ class Base:
         datos=cursor.fetchall()
         for i in datos:
             departamento= i[0]
+            print(departamento)
         cursor.execute(f"SELECT tickets.id_ticket, empleados.nombre,asuntos.titulo, tickets.descripcion, tickets.status, tickets.fecha_creacion FROM tickets INNER JOIN empleados ON empleados.id_empleado = tickets.id_empleado INNER JOIN asuntos ON asuntos.id_asunto = tickets.asunto INNER JOIN departamentos ON departamentos.id_departamento = asuntos.departamento WHERE status=2 AND departamentos.nombre='{departamento}'")
         datos= cursor.fetchall()
         conexion.close()
@@ -330,14 +335,18 @@ class Base:
             conexion.commit()
             conexion.close()
 
-    def consultar_empleado_depto(self,departamento):
+    def consultar_empleado_depto(self,id_ticket):
            conexion= sql.connect("BD_MesadeAyuda.db")
            cursor= conexion.cursor()
-           cursor.execute(f"SELECT empleados.id_empleado, empleados.nombre,puestos.descripcion, empleados.direccion, empleados.telefono, empleados.correo FROM empleados INNER JOIN puestos ON puestos.id_puesto = empleados.puesto INNER JOIN departamentos ON departamentos.id_departamento = puestos.departamento_id WHERE departamentos.nombre= '{departamento}'")
+           cursor.execute(f"SELECT departamentos.nombre FROM tickets INNER JOIN asuntos ON asuntos.id_asunto = tickets.asunto INNER JOIN departamentos ON departamentos.id_departamento = asuntos.departamento WHERE id_ticket={id_ticket}")
+           datos= cursor.fetchall()
+           for i in datos:
+            departamento= i[0]
+           cursor.execute(f"SELECT empleados.id_empleado, empleados.nombre FROM empleados INNER JOIN puestos ON puestos.id_puesto = empleados.puesto INNER JOIN departamentos ON departamentos.id_departamento = puestos.departamento_id WHERE departamentos.nombre= '{departamento}'")
            datos= cursor.fetchall()
            conexion.close()
            for i in datos:
-            print(i[0],i[1],i[2])
+            print(i[0],i[1])
 
     def modificar(self):
             conexion= sql.connect("BD_MesadeAyuda.db")
@@ -489,8 +498,8 @@ class Base:
     def borrar_datos(self):
            conexion= sql.connect("BD_MesadeAyuda.db")
            cursor= conexion.cursor()
-           cursor.execute("DELETE FROM tickets_rechazados")
-           cursor.execute("DELETE FROM sqlite_sequence WHERE name='tickets_rechazados'")
+           cursor.execute("DELETE FROM ticketaceptado")
+           cursor.execute("DELETE FROM sqlite_sequence WHERE name='ticketaceptado'")
            conexion.commit()
            conexion.close()
 
@@ -521,8 +530,8 @@ class Base:
            for i in datos:
                   respuesta= i[1]
                   solucion= i[2]
-                  respuesta= datetime.strptime(respuesta, '%Y-%m-%d')
-                  solucion= datetime.strptime(solucion, '%Y-%m-%d')
+                  respuesta= datetime.strptime(respuesta, '%Y-%m-%d %H:%M:%S')
+                  solucion= datetime.strptime(solucion, '%Y-%m-%d %H:%M:%S')
                   inicio= datetime.strptime(fecha_inicio, '%Y-%m-%d')
                   final= datetime.strptime(fecha_final, '%Y-%m-%d')
                   if solucion > inicio and solucion < final :
@@ -533,13 +542,22 @@ class Base:
            promedio= round(tiemporespuesta / resueltos)
            print("Promedio de Tiempo de Respuesta:")
            print(promedio, "Minutos")
+
+    def convertir(self):
+          conexion= sql.connect("BD_MesadeAyuda.db")
+          df = pd.read_excel("Tickets_Aceptados_2.xlsx")
+          df["fecha_respuesta"]= pd.to_datetime(df["fecha_respuesta"])
+          df["fecha_respuesta"] = df["fecha_respuesta"].dt.strftime("%Y-%m-%d %H:%M:%S")
+          df.to_sql("ticketaceptado",conexion,if_exists="append", index=False)
                   
     def exportarTabla(self):
            conexion= sql.connect("BD_MesadeAyuda.db")
-           instuccion="SELECT tickets.id_ticket, tickets.descripcion, empleados.nombre, ticketaceptado.situacion,tickets.fecha_creacion, ticketaceptado.fecha_respuesta,ticketaceptado.fecha_solucion, ticketaceptado.fecha_caducidad FROM ticketaceptado INNER JOIN empleados ON empleados.id_empleado= ticketaceptado.empleado INNER JOIN tickets ON tickets.id_ticket = ticketaceptado.ticket"
+           #instuccion= "SELECT tickets.id_ticket, empleados.nombre, departamentos.nombre, asuntos.titulo, tickets.descripcion, tickets.status, tickets.fecha_creacion FROM tickets INNER JOIN empleados ON empleados.id_empleado = tickets.id_empleado INNER JOIN asuntos ON asuntos.id_asunto = tickets.asunto INNER JOIN departamentos ON departamentos.id_departamento = asuntos.departamento"
+           instuccion= "SELECT * FROM ticketaceptado"
+           #instuccion="SELECT tickets.id_ticket, tickets.descripcion, departamentos.nombre,empleados.nombre, ticketaceptado.situacion,tickets.fecha_creacion, ticketaceptado.fecha_respuesta,ticketaceptado.fecha_solucion, ticketaceptado.fecha_caducidad FROM ticketaceptado INNER JOIN empleados ON empleados.id_empleado= ticketaceptado.empleado INNER JOIN tickets ON tickets.id_ticket = ticketaceptado.ticket INNER JOIN asuntos ON asuntos.id_asunto = tickets.asunto INNER JOIN departamentos ON departamentos.id_departamento = asuntos.departamento"
            #instuccion= "SELECT tickets.id_ticket, tickets.descripcion, tickets_rechazados.motivo, tickets.fecha_creacion, tickets_rechazados.fecha_respuesta FROM tickets_rechazados INNER JOIN tickets ON tickets.id_ticket = tickets_rechazados.id_ticket"
            df= pd.read_sql_query(instuccion,conexion)
-           df.to_excel('Tickets_Aceptados.xlsx',index=False)
+           df.to_excel('Tickets_Aceptados_2.xlsx',index=False)
            conexion.close()
     
 
