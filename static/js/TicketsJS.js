@@ -2,18 +2,20 @@ $(document).ready(function(){
 
 consultarDepartamentos();
 obtenerTicketsGenerados();
-obtenerAdministrarTicket();
 })
+const id_empleado = parseInt(localStorage.getItem("idEmpleadoGlobal"));
 
 async function consultarDepartamentos() {
   
-  selectDepartamentos=document.getElementById("selectDepartamento");
+  var selectDepartamentos=document.getElementById("selectDepartamento");
+  var selectDepartamentosPromedio=document.getElementById("selectDepartamentoPromedio");
   fetch('/filtroDepartamento').then(response => response.json()).then(data => {
     for(var i in data){
       var opcionDepas= document.createElement("option");
         opcionDepas.value=i;
         opcionDepas.text=data[i];
         selectDepartamentos.add(opcionDepas);
+        selectDepartamentosPromedio.add(opcionDepas)
     }
     });
 }
@@ -29,7 +31,7 @@ async function consultarProblematicas(departamento) {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ "id_departamento":departamento })
+        body: JSON.stringify({ id_departamento:departamento })
       });
 
       if (resultado.ok){
@@ -101,8 +103,6 @@ $("#btnGenerarTicket").click(async function(){
   }
 })
 
-
-
 function validarNoVacios(datos) {
   return Object.values(datos).every(valor => {
     return valor !== null && 
@@ -119,7 +119,9 @@ function mostrarApartado(idVista) {
     "Asignados", 
     "Administrar", 
     "Aceptados", 
-    "Rechazados"
+    "Rechazados",
+    "reporteTickets",
+    "reporteTicketsOperativo"
   ];
 
   secciones.forEach(seccion => {
@@ -128,11 +130,15 @@ function mostrarApartado(idVista) {
   });
   const vistaActiva = document.getElementById(idVista);
   if (vistaActiva) vistaActiva.style.display = 'block';
+  if(idVista='Administrar'){
+    obtenerAdministrarTicket()
+  }
+  if(idVista='Aceptados'){
+    obtenerTicketsAceptados()
+  }
 }
 
 async function obtenerTicketsGenerados() {
-  const id_empleado = parseInt(localStorage.getItem("idEmpleadoGlobal"));
-
   try {
     const response = await fetch(`/mostrarMisTickets?id_empleado=${id_empleado}`, {
       method: "GET"
@@ -167,7 +173,7 @@ async function obtenerTicketsGenerados() {
 
 async function obtenerAdministrarTicket(){
   try{
-    await fetch('/administrarTickets').then(response=>{
+    await fetch(`/administrarTickets?id_empleado=${id_empleado}`).then(response=>{
       if (!response.ok){
         throw new Error(`HTTP ERROR! status ${response.status}`)
       }
@@ -188,7 +194,7 @@ async function obtenerAdministrarTicket(){
                               </div>
                               <div class="col-4">
                                 <small class="text-muted">Emisor:</small>
-                                <div id="emisor">Juan Pérez</div>
+                                <div id="emisor">${administrarJson[i].nombre}</div>
                               </div>
                               <div class="col-4">
                                 <label for="EmpleadoDisponible" class="form-label mb-1">Asignar a:</label>
@@ -201,15 +207,11 @@ async function obtenerAdministrarTicket(){
                             </div>
 
                             <div class="row small">
-                              <div class="col-4">
-                                <strong>Departamento:</strong><br>
-                                ${administrarJson[i].nombre}
-                              </div>
-                              <div class="col-4">
+                              <div class="col-5">
                                 <strong>Problemática:</strong><br>
-                                ${administrarJson[i].titulo}
+                                ${administrarJson[i].descripcion}
                               </div>
-                              <div class="col-4">
+                              <div class="col-7">
                                 <strong>Descripción:</strong><br>
                                 ${administrarJson[i].descripcion}
                               </div>
@@ -235,3 +237,258 @@ async function obtenerAdministrarTicket(){
     });
   }
 }
+
+
+async function obtenerTicketsAceptados() {
+  try{
+    console.log("entro al js de aceptados")
+    await fetch(`/ticketsAceptados?id_empleado=${id_empleado}`).then(response=>{
+      if(!response.ok){
+        throw new Error(`HTTP ERROR ${response.status}`)
+      }
+      return response.json() 
+    }).then(data=>{
+      var bodyAceptados = document.getElementById("bodyAceptados");
+      var aceptadosJson= JSON.parse(data)
+      for(var i =0; i<aceptadosJson.length;i++){
+        var contenido=`
+          <tr>
+            <td>${aceptadosJson[i].titulo}</td>
+            <td>${aceptadosJson[i].descripcion}</td>
+            <td>${aceptadosJson[i].fecha_creacion}</td>
+            <td>${aceptadosJson[i].nombre}</td>
+            <td>${aceptadosJson[i].situacion}</td>
+            <td>${aceptadosJson[i].fecha_solucion}</td>
+            <td>${aceptadosJson[i].fecha_caducidad}</td>
+          </tr>
+        `
+        bodyAceptados.innerHTML += contenido
+      }
+
+    })
+  }catch{
+    Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text: "Algo salio mal, no se pudo obtener los tickets Aceptados!",
+      footer: '<a href="#">Why do I have this issue?</a>'
+    });
+  }
+}
+
+
+async function obtenerOperativoTicketsDiario(fecha) {
+  try {
+    fetch(`/operativoDiarioTickets?fecha=${fecha}`).then(response=>{
+      if(!response.ok){
+        throw new Error(`HTTP ERROR: ${response.status}`)
+      }
+      return response.json()
+    }).then(data=>{
+      var bodyTicketsDiarios= document.getElementById("bodyTicketsDiarios");
+      var jsonTicketsDiarios=JSON.parse(data)    
+      bodyTicketsDiarios.innerHTML=''  
+      jsonTicketsDiarios.forEach((ticketsDiario)=>{
+        bodyTicketsDiarios.innerHTML+=`
+          <tr>
+            <td>${ticketsDiario.fecha_creacion}</td>
+            <td>${ticketsDiario.nombre}</td>
+            <td>${ticketsDiario.total}</td>
+          </tr>
+        `
+      })
+
+    })
+  } catch (error) {
+    
+  }
+}
+
+$("#btnConsultarDiario").click(function(){
+  var fecha= document.getElementById("datePicker");
+  fechaSele= fecha.value
+  console.log(fechaSele)
+  if(!fechaSele){
+    Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text: "Selecciona una fecha!"
+    });
+  }
+  obtenerOperativoTicketsDiario(fechaSele)
+});
+
+function obtenerOperativoMensualDepartamento(mes,anio){
+  data={
+    mes:mes,
+    anio:anio
+  }
+  try {
+    fetch(`/operativoMensualTicketsDepa`,{
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json"
+        },
+        body: JSON.stringify(data)
+    }).then(response=>{
+      if(!response.ok){
+        throw new Error(`HTTP ERROR: ${response.status}`)
+      }
+      return response.json()
+    }).then(data=>{
+      var bodyTicketsMensualDepa= document.getElementById("bodyTicketsMensualDepa")
+      bodyTicketsMensualDepa.innerHTML=''
+      var jsonTicketsMensuales= JSON.parse(data)
+
+      jsonTicketsMensuales.forEach((ticket)=>{
+        bodyTicketsMensualDepa.innerHTML+=`
+          <tr>
+            <td>${ticket.fecha_creacion}</td>
+            <td>${ticket.nombre}</td>
+            <td>${ticket.total}</td>
+          </tr>
+        `
+      })
+    })
+  } catch (error) {
+    
+  }
+}
+
+$("#btnConsultarMensualDepa").click(function(){
+  var datepicker1= document.getElementById("datepicker1")
+  datepicker1= datepicker1.value
+  if(!datepicker1){
+    Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text: "Escoge un mes y año"
+    });
+  }else{
+    var aFecha=datepicker1.split("-")
+    obtenerOperativoMensualDepartamento(aFecha[1],aFecha[0])
+  }
+});
+
+function obtenerOperativoTicketsCaducados(fecha_inicio, fecha_fin){
+  data={
+    fecha_inicio:fecha_inicio,
+    fecha_fin:fecha_fin
+  }
+  try {
+    fetch('/operativoTicketsCaducados',{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body: JSON.stringify(data)
+    }).then(response=>{
+      if(!response.ok){
+        throw new Error(`ERROR HTTP ${response.status}`)
+      }
+      return response.json()
+    }).then(data=>{
+      jsonTicketsCaducados= JSON.parse(data)
+      var bodyTicketsCaducados = document.getElementById("bodyTicketsCaducados");
+      bodyTicketsCaducados.innerHTML=''
+      jsonTicketsCaducados.forEach((ticketCaducado)=>{
+        bodyTicketsCaducados.innerHTML+=`
+          <tr>
+            <td>${ticketCaducado.id_ticket}</td>
+            <td>${ticketCaducado.descripcion}</td>
+            <td>${ticketCaducado.nombre}</td>
+            <td>${ticketCaducado.situacion}</td>
+            <td>${ticketCaducado.fecha_solucion}</td>
+            <td>${ticketCaducado.fecha_creacion}</td>
+            <td>${ticketCaducado.fecha_respuesta}</td>
+            <td>${ticketCaducado.fecha_caducidad}</td>
+          </tr>
+        `
+      })
+    })
+  } catch (error) {
+    
+  }
+}
+
+
+$(function () {
+    $('#rangoFechas').daterangepicker({
+      locale: {
+        format: 'YYYY-MM-DD',
+        applyLabel: 'Aplicar',
+        cancelLabel: 'Cancelar',
+        fromLabel: 'Desde',
+        toLabel: 'Hasta',
+        customRangeLabel: 'Personalizado',
+        weekLabel: 'S',
+        daysOfWeek: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
+        monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+          'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+        firstDay: 1
+      },
+      opens: 'right'
+    });
+     $('#rangoFechasPromedio').daterangepicker({
+      locale: {
+        format: 'YYYY-MM-DD',
+        applyLabel: 'Aplicar',
+        cancelLabel: 'Cancelar',
+        fromLabel: 'Desde',
+        toLabel: 'Hasta',
+        customRangeLabel: 'Personalizado',
+        weekLabel: 'S',
+        daysOfWeek: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
+        monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+          'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+        firstDay: 1
+      },
+      opens: 'right'
+    });
+});
+
+$("#btnConsultarCaducados").click(function(){
+  var rangoFechas= document.getElementById("rangoFechas");
+  rangoFechas= rangoFechas.value
+  var nuevasFechas= rangoFechas.split(' - ')
+  obtenerOperativoTicketsCaducados(nuevasFechas[0], nuevasFechas[1])
+})
+
+function obtenerOperativoTiempoRespuesta(departamento, fecha_inicio, fecha_fin){
+  data={
+    departamento:departamento, 
+    fecha_inicio:fecha_inicio,
+    fecha_fin:fecha_fin
+  }
+  try {
+    fetch('/operativoTiempoRespuesta',{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body: JSON.stringify(data)
+    }).then(response=>{
+      if(!response.ok){
+        throw new Error(`HTTP ERROR ${response.status}`)
+      }
+      return response.json()
+    }).then(respuesta=>{
+      console.log(respuesta)
+    })
+  } catch (error) {
+    
+  }
+}
+
+$("#btnConsultarPromedio").click(function(){
+  var rangoFechasPromedio= document.getElementById("rangoFechasPromedio");
+  rangoFechasPromedio= rangoFechasPromedio.value;
+  var nuevasFechas= rangoFechasPromedio.split(' - ')
+  var selectDepartamentosPromedio= document.getElementById("selectDepartamentoPromedio")
+  var valorSeleccionado = parseInt(selectDepartamentosPromedio.value);
+  console.log(typeof(valorSeleccionado))
+  obtenerOperativoTiempoRespuesta(valorSeleccionado,nuevasFechas[0],nuevasFechas[1])
+})
+
+
+

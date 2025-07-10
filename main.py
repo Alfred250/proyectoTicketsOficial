@@ -6,6 +6,7 @@ from routers.ticketsRouter import router
 from routers.filtrosTicketsRouter import router as routerFiltrosTickets
 from models.regUser import RegistrarUsuario
 from data.conexionTablaUsuarios import DataBaseUser
+from routers.reporteOperativoRouter import router as routerOperativo
 app = FastAPI(title="Las primeras pruebas")
 
 # Servir archivos estáticos
@@ -81,3 +82,4 @@ def get_usuarios():
 
 app.include_router(router)
 app.include_router(routerFiltrosTickets)
+app.include_router(routerOperativo)

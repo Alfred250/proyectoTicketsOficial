@@ -23,10 +23,8 @@ def consultarDepartamentos():
 
 @router.post('/filtroProblematicas',  tags=["filtros"])
 def consultarProblematicas(datos:Problematica):
-    print("si entro al filtro prroble")
     tProblematicas= ConexionTablaProblematicas()
     resultado= tProblematicas.selectProblematicas(datos.id_departamento)
-    print("this result",resultado)
     if resultado:
         return JSONResponse(content=resultado)
     else:

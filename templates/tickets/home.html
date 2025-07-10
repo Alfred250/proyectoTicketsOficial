@@ -12,6 +12,10 @@
   />
   <link rel="stylesheet" href="static/css/home.css">
   <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/index.global.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/index.global.min.js"></script>
+
+
 </head>
 <body>
   <div class="container-fluid">
@@ -41,7 +45,7 @@
           <li class="nav-item mb-2">
             <div style="display: flex; align-items: center;">
               <img src="/static/img/ajustes.png" style="width: 24px; height: 24px; margin-right: 8px;" title="ajuste">
-              <button onclick="mostrarApartado('Administrar')" style="background: none; border: none; padding: 0; color: white; cursor: pointer;">
+              <button onclick="mostrarApartado('Administrar')" style="background: none; border: none; padding: 0; color: white; cursor: pointer;" >
                 Gestionar ticket
               </button>
             </div>
@@ -56,8 +60,22 @@
           <li class="nav-item mb-2">
             <div style="display: flex; align-items: center;">
               <img src="/static/img/rechazar.png" style="width: 24px; height: 24px; margin-right: 8px;" title="rechazar">
-              <button onclick="mostrarApartado('rechazados')" style="background: none; border: none; padding: 0; color: white; cursor: pointer;">
+              <button onclick="mostrarApartado('Rechazados')" style="background: none; border: none; padding: 0; color: white; cursor: pointer;">
                 Tickets Rechazados
+              </button>
+          </li>
+          <li class="nav-item mb-2">
+            <div style="display: flex; align-items: center;">
+              <img src="/static/img/rechazar.png" style="width: 24px; height: 24px; margin-right: 8px;" title="rechazar">
+              <button onclick="mostrarApartado('reporteTickets')" style="background: none; border: none; padding: 0; color: white; cursor: pointer;">
+                Reporte Tickets
+              </button>
+          </li>
+          <li class="nav-item mb-2">
+            <div style="display: flex; align-items: center;">
+              <img src="/static/img/rechazar.png" style="width: 24px; height: 24px; margin-right: 8px;" title="rechazar">
+              <button onclick="mostrarApartado('reporteTicketsOperativo')" style="background: none; border: none; padding: 0; color: white; cursor: pointer;">
+                Reporte Tickets Operativo
               </button>
           </li>
         </ul>
@@ -67,77 +85,76 @@
       <main class="col-md-8 col-lg-9 p-4 mb-2" id="mainTicket">
 
         <div id="CrearTicket" class="mb-4 py-4 bg-light rounded-4 shadow-sm">
-  <div class="container">
-    <!-- Título -->
-    <div class="row mb-4">
-      <div class="col-12 text-center">
-        <h2 class="fw-bold text-primary">Creación de Tickets</h2>
-        <p class="text-muted">Llena los siguientes campos para generar un nuevo ticket.</p>
-      </div>
-    </div>
+          <div class="container">
+            <!-- Título -->
+            <div class="row mb-4">
+              <div class="col-12 text-center">
+                <h2 class="fw-bold text-primary">Creación de Tickets</h2>
+                <p class="text-muted">Llena los siguientes campos para generar un nuevo ticket.</p>
+              </div>
+            </div>
 
-    <!-- Formulario -->
-    <div class="row mb-4">
-      <div class="form-group col-md-6 mb-3">
-        <label for="selectDepartamento" class="form-label fw-semibold text-secondary">Departamento</label>
-        <select class="form-select" id="selectDepartamento">
-          <option selected disabled>Selecciona una opción</option>
-        </select>
-      </div>
-      <div class="form-group col-md-6 mb-3">
-        <label for="selectProblematicas" class="form-label fw-semibold text-secondary">Problemáticas</label>
-        <select class="form-select" id="selectProblematicas">
-          <option selected disabled>Selecciona una opción</option>
-        </select>
-      </div>
-    </div>
+            <!-- Formulario -->
+            <div class="row mb-4">
+              <div class="form-group col-md-6 mb-3">
+                <label for="selectDepartamento" class="form-label fw-semibold text-secondary">Departamento</label>
+                <select class="form-select" id="selectDepartamento">
+                  <option selected disabled>Selecciona una opción</option>
+                </select>
+              </div>
+              <div class="form-group col-md-6 mb-3">
+                <label for="selectProblematicas" class="form-label fw-semibold text-secondary">Problemáticas</label>
+                <select class="form-select" id="selectProblematicas">
+                  <option selected disabled>Selecciona una opción</option>
+                </select>
+              </div>
+            </div>
 
-    <div class="row mb-4">
-      <div class="form-group col-12">
-        <label for="txtEspecificaciones" class="form-label fw-semibold text-secondary">Especificaciones</label>
-        <textarea class="form-control" id="txtEspecificaciones" rows="4" placeholder="Describe el problema con detalle..."></textarea>
-      </div>
-    </div>
+            <div class="row mb-4">
+              <div class="form-group col-12">
+                <label for="txtEspecificaciones" class="form-label fw-semibold text-secondary">Especificaciones</label>
+                <textarea class="form-control" id="txtEspecificaciones" rows="4" placeholder="Describe el problema con detalle..."></textarea>
+              </div>
+            </div>
 
-    <!-- Botón -->
-    <div class="row mb-5 justify-content-center">
-      <div class="col-auto">
-        <button type="button" class="btn btn-lg btn-primary px-5" id="btnGenerarTicket">
-          Generar Ticket
-        </button>
-      </div>
-    </div>
+            <!-- Botón -->
+            <div class="row mb-5 justify-content-center">
+              <div class="col-auto">
+                <button type="button" class="btn btn-lg btn-primary px-5" id="btnGenerarTicket">
+                  Generar Ticket
+                </button>
+              </div>
+            </div>
 
-    <!-- Tabla -->
-    <div class="row">
-      <div class="col-12">
-        <div class="card shadow border-0">
-          <div class="card-header bg-primary text-white text-center fw-bold">
-            Tickets Generados
-          </div>
-          <div class="table-responsive" style="max-height: 350px;">
-            <table class="table table-hover table-striped align-middle mb-0">
-              <thead class="table-dark text-center">
-                <tr>
-                  <th>Id Ticket</th>
-                  <th>Departamento</th>
-                  <th>Problemática</th>
-                  <th>Estatus</th>
-                </tr>
-              </thead>
-              <tbody class="table-border-bottom-0 text-center" id="tbodyMitickets">
-                <!-- Tickets serán agregados dinámicamente -->
-              </tbody>
-            </table>
+            <!-- Tabla -->
+            <div class="row">
+              <div class="col-12">
+                <div class="card shadow border-0">
+                  <div class="card-header bg-primary text-white text-center fw-bold">
+                    Tickets Generados
+                  </div>
+                  <div class="table-responsive" style="max-height: 350px;">
+                    <table class="table table-hover table-striped align-middle mb-0">
+                      <thead class="table-dark text-center">
+                        <tr>
+                          <th>Id Ticket</th>
+                          <th>Departamento</th>
+                          <th>Problemática</th>
+                          <th>Estatus</th>
+                        </tr>
+                      </thead>
+                      <tbody class="table-border-bottom-0 text-center" id="tbodyMitickets">
+                        <!-- Tickets serán agregados dinámicamente -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
-</div>
 
-
-         <div id="Asignados" class="mb-2" style="display:none">
+         <div id="Asignados" class="mb-2" style="display:none">W
           <div class="container-fluid">
             <div class="page-header mb-3">
                 <h3>Tickets Asignados</h3>
@@ -269,7 +286,7 @@
             <div class="page-header mb-3">
                 <h3>Tickets aceptados</h3>
             </div>
-            <div class="body mt-2">
+            <div class="body mt-2" style="max-height: 800px; overflow-y: auto;"">
               <div class="row mb-5">
                   <div class="row">
                     <div class="col-5">
@@ -296,25 +313,17 @@
                   <table class="table">
                     <thead>
                       <tr>
-                        <th>Departamento</th>
                         <th>Problematica</th>
-                        <th>Detalle</th>
-                        <th>Fecha Aceptacion</th>
-                        <th>Id Empleado solicitud</th>
-                        <th>Id Empleado asignado</th>
-                        <th>Estado</th>
+                        <th>Descripcion</th>
+                        <th>Fecha Creacion</th>
+                        <th>Empleado Asignado</th>
+                        <th>Situacion</th>
+                        <th>Fecha Respuesta</th>
+                        <th>Fecha caducidad</th>
                       </tr>
                     </thead>
-                    <tbody class="table-border-bottom-0">
-                      <tr>
-                        <th>Si</th>
-                        <th>Si</th>
-                        <th>Si</th>
-                        <th>Si</th>
-                        <th>Si</th>
-                        <th>Si</th>
-                        <th>Si</th>
-                      </tr>
+                    <tbody class="table-border-bottom-0" id="bodyAceptados" style="max-width: 30px; max-height:300px">
+                      
                     </tbody>
                   </table>
                 </div>
@@ -385,19 +394,145 @@
             </div>
           </div>
         </div>
+
+        <div id="reporteTickets" class="mt-3" style="display:none">
+          <div class="container-fluid">
+            <div class="page-header mb-3">
+                <h3>Reporte Tickets </h3>
+            </div>
+              <div class="col-3 me-3" style="margin-right: 40px;">
+                <div class="body mt-2">
+                  <div class="row mt-2">
+                    <div class="card" style="text-align: center;">
+                      <h1>Reporte diario de tickets</h1>
+                      <input type="date" id="datePicker" style="max-width: 200px; margin-bottom: 10px;" />
+                      <button id="btnConsultarDiario">Consultar</button>
+                      <div style="max-height: 200px; overflow-x: auto;">
+                        <table class="table">
+                          <thead>
+                            <tr>
+                              <th>Fecha de creacion</th>
+                              <th>Departamento</th>
+                              <th>Total</th
+                            </tr>
+                          </thead>
+                          <tbody class="table-border-bottom-0" id="bodyTicketsDiarios">
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-6"> 
+                <div class="body mt-2">
+                  <div class="row mt-2">
+                    <div class="card text-center p-3">
+                      <h1>Reporte mensual de tickets por departamento</h1>
+                      <input type="month" name="datepicker1" id="datepicker1" class="date-picker mb-2">
+                      <button id="btnConsultarMensualDepa" class="btn btn-primary mb-3">Consultar</button>
+                      <div style="max-height: 300px; overflow-x: auto;">
+                        <table class="table table-bordered table-striped">
+                          <thead class="table-dark">
+                            <tr>
+                              <th>Fecha de creación</th>
+                              <th>Departamento</th>
+                              <th>Total</th>
+                            </tr>
+                          </thead>
+                          <tbody id="bodyTicketsMensualDepa">
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>¿
+
+          </div>
+        </div>
+
+         <div id="reporteTicketsOperativo" class="mt-3" style="display:none">
+          <div class="container-fluid">
+            <div class="page-header mb-3">
+                <h3>Reporte Tickets </h3>
+            </div>
+              
+              
+                <div class="body mt-2">
+                  <div class="row mt-2">
+                    <div class="card text-center p-3">
+                      <h1>Reporte mensual de tiempo promedio de respuesta  </h1>
+                      <label for="selectDepartamentoPromedio" class="form-label fw-semibold text-secondary">Departamento</label>
+                      <select class="form-select" id="selectDepartamentoPromedio">
+                        <option selected disabled>Selecciona una opción</option>
+                      </select>
+                      <input type="text" id="rangoFechasPromedio" class="form-control mb-2" />
+                      <button id="btnConsultarPromedio" class="btn btn-primary mb-3">Consultar</button>
+                      <div style="max-height: 300px; max-width:1000px; overflow-x: auto;">
+                        <table class="table table-bordered table-striped">
+                          <thead class="table-dark">
+                            <tr>
+                              <th>Tiempo de respuesta</th>
+                              <th>Tickets resueltos</th>
+                              <th>Tiempo promedio</th>
+                            </tr>
+                          </thead>
+                          <tbody id="bodyPromedioRespuesta">
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              
+              
+                <div class="body mt-2">
+                  <div class="row mt-2">
+                    <div class="card text-center p-3">
+                      <h1>Reporte mensual de tickets caducados  </h1>
+                      <input type="text" id="rangoFechas" class="form-control mb-2" />
+                      <button id="btnConsultarCaducados" class="btn btn-primary mb-3">Consultar</button>
+                      <div style="max-height: 300px; max-width:1000px;overflow-x: auto;">
+                        <table class="table table-bordered table-striped">
+                          <thead class="table-dark">
+                            <tr>
+                              <th>Id Ticket</th>
+                              <th>Descripcion</th>
+                              <th>Empleado</th>
+                              <th>Situacion</th>
+                              <th>Fecha solucion</th>
+                              <th>Fecha creacion</th>
+                              <th>Fecha respuesta</th>
+                              <th>Fecha caducidad</th>
+                            </tr>
+                          </thead>
+                          <tbody id="bodyTicketsCaducados">
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+             
+
+
+          </div>
+        </div>
+
       </main>
     </div>
   </div>
 
-  <!-- Scripts -->
+  
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"
     integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
     crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  
+  <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+  <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
   <script src="static/js/TicketsJS.js"></script>
 </body>
 </html>
