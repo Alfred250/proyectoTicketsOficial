@@ -454,12 +454,16 @@ $("#btnConsultarCaducados").click(function(){
   obtenerOperativoTicketsCaducados(nuevasFechas[0], nuevasFechas[1])
 })
 
-function obtenerOperativoTiempoRespuesta(departamento, fecha_inicio, fecha_fin){
+function obtenerOperativoTiempoRespuesta(departamentore, fecha_inicio, fecha_fin){
+ 
+  console.log(departamentore)
   data={
-    departamento:departamento, 
+    departamento:departamentore, 
     fecha_inicio:fecha_inicio,
     fecha_fin:fecha_fin
   }
+  console.log(typeof(fecha_fin))
+  console.log(typeof(fecha_inicio))
   try {
     fetch('/operativoTiempoRespuesta',{
       method:"POST",
@@ -486,7 +490,7 @@ $("#btnConsultarPromedio").click(function(){
   var nuevasFechas= rangoFechasPromedio.split(' - ')
   var selectDepartamentosPromedio= document.getElementById("selectDepartamentoPromedio")
   var valorSeleccionado = parseInt(selectDepartamentosPromedio.value);
-  console.log(typeof(valorSeleccionado))
+  console.log(valorSeleccionado)
   obtenerOperativoTiempoRespuesta(valorSeleccionado,nuevasFechas[0],nuevasFechas[1])
 })
 

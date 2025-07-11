@@ -522,34 +522,34 @@ class Base:
            
 
     def tiempo_tickets(self,departamento, fecha_inicio, fecha_final):
-           conexion= sql.connect("BD_MesadeAyuda.db")
-           cursor= conexion.cursor()
-           instruccion= f"SELECT departamentos.nombre, ticketaceptado.fecha_respuesta, ticketaceptado.fecha_solucion FROM ticketaceptado INNER JOIN tickets ON tickets.id_ticket = ticketaceptado.ticket INNER JOIN asuntos ON asuntos.id_asunto=tickets.asunto INNER JOIN departamentos ON departamentos.id_departamento = asuntos.departamento WHERE departamentos.id_departamento= '{departamento}' "
-           cursor.execute(instruccion)
-           datos= cursor.fetchall()
-           conexion.close()
-           tiemporespuesta=0
-           resueltos= 0
-           for i in datos:
-                  respuesta= i[1]
-                  solucion= i[2]
-                  respuesta= datetime.strptime(respuesta, '%Y-%m-%d')
-                  solucion= datetime.strptime(solucion, '%Y-%m-%d')
-                  inicio= datetime.strptime(fecha_inicio, '%Y-%m-%d')
-                  final= datetime.strptime(fecha_final, '%Y-%m-%d')
-                  if solucion > inicio and solucion < final :
-                        tiemporespuesta+= (solucion-respuesta).total_seconds() / 60  
-                        resueltos+=1
-           print("Total del Tiempo de Respuesta: ", tiemporespuesta, " Minutos")  
-           print("Total de Tickets Resueltos: ", resueltos)
-           if resueltos>0:
-            promedio= round(tiemporespuesta / resueltos)
-           else:
-               promedio= tiemporespuesta
-           print("Promedio de Tiempo de Respuesta:")
-           print(promedio, "Minutos")
-           diccionario={"timepo_respuesta":tiemporespuesta,"resueltos":resueltos,"promedio":promedio}
-           return diccionario
+            conexion= sql.connect("BD_MesadeAyuda.db")
+            cursor= conexion.cursor()
+            instruccion= f"SELECT departamentos.nombre, ticketaceptado.fecha_respuesta, ticketaceptado.fecha_solucion FROM ticketaceptado INNER JOIN tickets ON tickets.id_ticket = ticketaceptado.ticket INNER JOIN asuntos ON asuntos.id_asunto=tickets.asunto INNER JOIN departamentos ON departamentos.id_departamento = asuntos.departamento WHERE departamentos.nombre= '{departamento}' "
+            cursor.execute(instruccion)
+            datos= cursor.fetchall()
+            conexion.close()
+            tiemporespuesta=0
+            resueltos= 0
+            for i in datos:
+                    respuesta= i[1]
+                    solucion= i[2]
+                    respuesta= datetime.strptime(respuesta, '%Y-%m-%d %H:%M:%S')
+                    solucion= datetime.strptime(solucion, '%Y-%m-%d %H:%M:%S')
+                    inicio= datetime.strptime(fecha_inicio, '%Y-%m-%d')
+                    final= datetime.strptime(fecha_final, '%Y-%m-%d')
+                    if solucion > inicio and solucion < final :
+                            tiemporespuesta+= (solucion-respuesta).total_seconds() / 60  
+                            resueltos+=1
+            print("Total del Tiempo de Respuesta: ", tiemporespuesta, " Minutos")  
+            print("Total de Tickets Resueltos: ", resueltos)
+            if(resueltos>0):
+                    promedio= round(tiemporespuesta / resueltos)
+            else:
+                promedio= tiemporespuesta
+            print("Promedio de Tiempo de Respuesta:")
+            print(promedio, "Minutos")
+            diccionario={"timepo_respuesta":tiemporespuesta,"resueltos":resueltos,"promedio":promedio}
+            return diccionario
                   
     def exportarTabla(self):
            conexion= sql.connect("BD_MesadeAyuda.db")
