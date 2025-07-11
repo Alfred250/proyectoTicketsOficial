@@ -524,7 +524,7 @@ class Base:
     def tiempo_tickets(self,departamento, fecha_inicio, fecha_final):
             conexion= sql.connect("BD_MesadeAyuda.db")
             cursor= conexion.cursor()
-            instruccion= f"SELECT departamentos.nombre, ticketaceptado.fecha_respuesta, ticketaceptado.fecha_solucion FROM ticketaceptado INNER JOIN tickets ON tickets.id_ticket = ticketaceptado.ticket INNER JOIN asuntos ON asuntos.id_asunto=tickets.asunto INNER JOIN departamentos ON departamentos.id_departamento = asuntos.departamento WHERE departamentos.nombre= '{departamento}' "
+            instruccion= f"SELECT departamentos.nombre, ticketaceptado.fecha_respuesta, ticketaceptado.fecha_solucion FROM ticketaceptado INNER JOIN tickets ON tickets.id_ticket = ticketaceptado.ticket INNER JOIN asuntos ON asuntos.id_asunto=tickets.asunto INNER JOIN departamentos ON departamentos.id_departamento = asuntos.departamento WHERE departamentos.id_departamento= '{departamento}' "
             cursor.execute(instruccion)
             datos= cursor.fetchall()
             conexion.close()
@@ -548,6 +548,9 @@ class Base:
                 promedio= tiemporespuesta
             print("Promedio de Tiempo de Respuesta:")
             print(promedio, "Minutos")
+            #horas= tiemporespuesta//60
+            #minutos= tiemporespuesta%60
+            #tiemporespuesta=f"{horas}.{minutos}"
             diccionario={"timepo_respuesta":tiemporespuesta,"resueltos":resueltos,"promedio":promedio}
             return diccionario
                   

@@ -477,7 +477,15 @@ function obtenerOperativoTiempoRespuesta(departamentore, fecha_inicio, fecha_fin
       }
       return response.json()
     }).then(respuesta=>{
-      console.log(respuesta)
+      var bodyPromedioRespuesta= document.getElementById("bodyPromedioRespuesta")
+      bodyPromedioRespuesta.innerHTML=`
+        <tr>
+          <td>${respuesta.timepo_respuesta}</td>
+          <td>${respuesta.resueltos}</td>
+          <td>${respuesta.promedio}</td>
+        </tr>
+      `
+      
     })
   } catch (error) {
     
@@ -488,10 +496,14 @@ $("#btnConsultarPromedio").click(function(){
   var rangoFechasPromedio= document.getElementById("rangoFechasPromedio");
   rangoFechasPromedio= rangoFechasPromedio.value;
   var nuevasFechas= rangoFechasPromedio.split(' - ')
-  var selectDepartamentosPromedio= document.getElementById("selectDepartamentoPromedio")
-  var valorSeleccionado = parseInt(selectDepartamentosPromedio.value);
+  var selectDepartamentosPromedio= document.getElementById("selectDepartamentoPromedio").value
+  var valorSeleccionado = parseInt(selectDepartamentosPromedio);
   console.log(valorSeleccionado)
-  obtenerOperativoTiempoRespuesta(valorSeleccionado,nuevasFechas[0],nuevasFechas[1])
+  if(valorSeleccionado>0){
+    obtenerOperativoTiempoRespuesta(valorSeleccionado,nuevasFechas[0],nuevasFechas[1])
+  }else{
+
+  }
 })
 
 
