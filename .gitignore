@@ -1,6 +1,27 @@
+# Entorno virtual de Python (creado en la raíz del proyecto)
+Lib/
+Scripts/
+pyvenv.cfg
 
-!requirements.txt
-MdeAyuda.py
-BD_MesadeAyuda.db
+# Archivos Python compilados
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+
+# Archivos de configuración del entorno
+.env
+.venv
+env/
+venv/
+
+# Archivos de log
+*.log
+
+# Archivos temporales de sistema operativo
+.DS_Store
+Thumbs.db
+
+# Archivos de IDEs (opcional, si usas VSCode o PyCharm)
+.vscode/
+.idea/
+
