@@ -263,7 +263,16 @@ class Base:
         conexion.close()
         for i in datos:
                 print(i)
-           
+
+    def revisar_tickets_asignados(self,empleado):
+            conexion= sql.connect("BD_MesadeAyuda.db")
+            cursor= conexion.cursor()
+            cursor.execute(f"SELECT tickets.id_ticket,asuntos.titulo, empleados.nombre, ticketaceptado.situacion,ticketaceptado.fecha_solucion ,tickets.fecha_creacion, ticketaceptado.fecha_respuesta, ticketaceptado.fecha_caducidad FROM ticketaceptado INNER JOIN tickets ON tickets.id_ticket = ticketaceptado.ticket INNER JOIN empleados ON empleados.id_empleado= ticketaceptado.empleado INNER JOIN asuntos ON asuntos.id_asunto = tickets.asunto INNER JOIN departamentos ON departamentos.id_departamento = asuntos.departamento WHERE ticketaceptado.empleado={empleado}")
+            datos= cursor.fetchall()
+            conexion.close()
+            for i in datos:
+                print(i)
+      
     def consultar_tickets_all(self):
         conexion= sql.connect("BD_MesadeAyuda.db")
         cursor= conexion.cursor()
@@ -553,11 +562,11 @@ class Base:
     def exportarTabla(self):
            conexion= sql.connect("BD_MesadeAyuda.db")
            #instuccion= "SELECT tickets.id_ticket, empleados.nombre, departamentos.nombre, asuntos.titulo, tickets.descripcion, tickets.status, tickets.fecha_creacion FROM tickets INNER JOIN empleados ON empleados.id_empleado = tickets.id_empleado INNER JOIN asuntos ON asuntos.id_asunto = tickets.asunto INNER JOIN departamentos ON departamentos.id_departamento = asuntos.departamento"
-           instuccion= "SELECT * FROM ticketaceptado"
-           #instuccion="SELECT tickets.id_ticket, tickets.descripcion, departamentos.nombre,empleados.nombre, ticketaceptado.situacion,tickets.fecha_creacion, ticketaceptado.fecha_respuesta,ticketaceptado.fecha_solucion, ticketaceptado.fecha_caducidad FROM ticketaceptado INNER JOIN empleados ON empleados.id_empleado= ticketaceptado.empleado INNER JOIN tickets ON tickets.id_ticket = ticketaceptado.ticket INNER JOIN asuntos ON asuntos.id_asunto = tickets.asunto INNER JOIN departamentos ON departamentos.id_departamento = asuntos.departamento"
+           #instuccion= "SELECT * FROM ticketaceptado"
+           instuccion="SELECT tickets.id_ticket, tickets.descripcion, departamentos.nombre,empleados.nombre, ticketaceptado.situacion,tickets.fecha_creacion, ticketaceptado.fecha_respuesta,ticketaceptado.fecha_solucion, ticketaceptado.fecha_caducidad FROM ticketaceptado INNER JOIN empleados ON empleados.id_empleado= ticketaceptado.empleado INNER JOIN tickets ON tickets.id_ticket = ticketaceptado.ticket INNER JOIN asuntos ON asuntos.id_asunto = tickets.asunto INNER JOIN departamentos ON departamentos.id_departamento = asuntos.departamento"
            #instuccion= "SELECT tickets.id_ticket, tickets.descripcion, tickets_rechazados.motivo, tickets.fecha_creacion, tickets_rechazados.fecha_respuesta FROM tickets_rechazados INNER JOIN tickets ON tickets.id_ticket = tickets_rechazados.id_ticket"
            df= pd.read_sql_query(instuccion,conexion)
-           df.to_excel('Tickets_Aceptados_2.xlsx',index=False)
+           df.to_excel('Tickets_Aceptados.xlsx',index=False)
            conexion.close()
     
 
