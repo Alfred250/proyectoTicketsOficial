@@ -7,6 +7,7 @@ import json
 class ConexionTablaTickets:
     def __init__(self):
         self.baseDatos= Base()
+        self.conexionBase=Base()
         
     def selectTicketsPropios(self, id_empleado):
         try:
@@ -28,19 +29,27 @@ class ConexionTablaTickets:
 
         
     def insertarTicket(self,id_empleado,asunto,descripcion):
-        conexionBaseDatos= Base()
         fecha_hoy = date.today()
         fecha_formateada = fecha_hoy.strftime("%Y-%m-%d")
-        conexionBaseDatos.insertar_ticket(id_empleado,asunto,descripcion,1,fecha_formateada)
+        self.conexionBase.insertar_ticket(id_empleado,asunto,descripcion,1,fecha_formateada)
         
 
     def ticketsAdministrar(self,id_empleado):
-        conexionBaseDatos= Base()
-        ejecucion= conexionBaseDatos.consultar_tickets_pendientes(id_empleado)
+        ejecucion= self.conexionBase.consultar_tickets_pendientes(id_empleado)
         return ejecucion
        
     def ticketsAceptados(self,id_empleado):
-        conexionBase= Base()
-        ejecucion= conexionBase.consultar_tickets_aceptados(id_empleado)
+        ejecucion= self.conexionBase.consultar_tickets_aceptados(id_empleado)
         return ejecucion
         
+    def ticketsAsignados(self,id_ticket):
+        ejecucion= self.conexionBase.consultar_empleado_depto(id_ticket)
+        return ejecucion
+    
+    def asignarTickets(self,id_ticket,empleado,situacio,fecha_respuesta,fecha_solucion,fecha_caducidad):
+        ejecucion= self.conexionBase.aceptar_ticket(id_ticket,empleado,situacio,fecha_respuesta,fecha_solucion,fecha_caducidad)
+        return ejecucion
+    
+    def rechazarTicket(self,ticket,motivo):
+        ejecucion= self.conexionBase.rechazar_ticket(ticket,motivo)
+        return ejecucion

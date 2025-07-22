@@ -171,9 +171,42 @@ async function obtenerTicketsGenerados() {
   }
 }
 
-async function obtenerAdministrarTicket(){
+function obtenerEmpleadoAsignar(id_ticket, selectElement) {
+  const id_ticketParse = parseInt(id_ticket);
+  const datosAsignados = { id_ticket: id_ticketParse };
+
+  fetch('/ticketsAsignados', {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(datosAsignados)
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`HTTP ERROR: ${response.status}`);
+    }
+    return response.json();
+  })
+  .then(data => {
+    const empleadoJson = JSON.parse(data);
+    selectElement.innerHTML = '<option value="">Seleccione</option>'; // Limpiar antes de llenar
+
+    empleadoJson.forEach(dato => {
+      const opt = document.createElement("option");
+      opt.value = dato.id_empleado;
+      opt.text = dato.nombre;
+      selectElement.append(opt);
+    });
+  })
+  .catch(error => {
+    console.error('Fetch error:', error);
+  });
+}
+
+ function obtenerAdministrarTicket(){
   try{
-    await fetch(`/administrarTickets?id_empleado=${id_empleado}`).then(response=>{
+    fetch(`/administrarTickets?id_empleado=${id_empleado}`).then(response=>{
       if (!response.ok){
         throw new Error(`HTTP ERROR! status ${response.status}`)
       }
@@ -187,6 +220,8 @@ async function obtenerAdministrarTicket(){
         <div class="row t-2">
                       <div class="container-fluid">
                           <div class="card ticket-card mb-3 p-3 shadow-sm">
+                            <label for="fecha" style="text-align:center; ">Fecha de caducidad</label>
+                            <input type="date" name="fecha" id="fechaAsignacion">
                             <div class="row align-items-center mb-2">
                               <div class="col-4">
                                 <small class="text-muted">Fecha:</small>
@@ -198,11 +233,9 @@ async function obtenerAdministrarTicket(){
                               </div>
                               <div class="col-4">
                                 <label for="EmpleadoDisponible" class="form-label mb-1">Asignar a:</label>
-                                <select class="form-select form-select-sm" id="EmpleadoDisponible">
-                                  <option value="">Seleccione</option>
-                                  <option value="1">Empleado 1</option>
-                                  <option value="2">Empleado 2</option>
-                                </select>
+                                <select class="form-select form-select-sm select-empleado" data-id-ticket="${administrarJson[i].id_ticket}" id="selectEmpleadoAsig">
+                                <option value="">Seleccione</option>
+                              </select>
                               </div>
                             </div>
 
@@ -216,17 +249,19 @@ async function obtenerAdministrarTicket(){
                                 ${administrarJson[i].descripcion}
                               </div>
                             </div>
-
                             <div class="mt-3 text-end">
                               <button class="btn btn-outline-danger btn-sm me-2" onclick="rechazarTicket(${administrarJson[i].id_ticket})">Rechazar</button>
-                              <button class="btn btn-primary btn-sm" onclick="asignarTicket(${administrarJson[i].id_ticket})">Asignar</button>
+                              <button class="btn btn-primary btn-sm" onclick="asignarTicket('${administrarJson[i].id_ticket}','${administrarJson[i].fecha_creacion}')">Asignar</button>
                             </div>
                           </div>
                       </div>
                     </div>
         `
       }
-      
+      document.querySelectorAll('.select-empleado').forEach(select => {
+    const id_ticket = select.getAttribute("data-id-ticket");
+    obtenerEmpleadoAsignar(id_ticket, select); 
+  });
     })
   }catch{
     Swal.fire({
@@ -238,6 +273,116 @@ async function obtenerAdministrarTicket(){
   }
 }
 
+function asignarTicket(ticket,fecha_creacion){
+  var id_empleadoAsignado= parseInt(document.getElementById("selectEmpleadoAsig").value);
+  var fecha_caducidad= document.getElementById("fechaAsignacion").value;
+  var id_ticket= parseInt(ticket)
+  console.log(Date.parse(fecha_caducidad))
+  console.log(Date.parse(fecha_creacion))
+  if(Date.parse(fecha_creacion)>Date.parse(fecha_caducidad)){
+    Swal.fire({
+    icon: "error",
+    title: "Oops...",
+    text: "No puedes asignar una fecha menor a la de creacion!"
+  });
+    throw new Error("NO SE PUEDE ASIGNAR UNA FECHA MENOR A LA DE CREACION")
+
+  }
+  data={
+    id_ticket:id_ticket,
+    empleado:id_empleadoAsignado,
+    situacion:"En observacion",
+    fecha_respuesta:"na",
+    fecha_solucion:"na",
+    fecha_caducidad:fecha_caducidad
+  }
+  try {
+    if(validarNoVacios(data)){
+      fetch('/asignarTicket',{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify(data)
+    }).then(response=>{
+      if(!response.ok){
+        throw new Error(`HTTP ERROR: ${response.status}`)
+      }
+      return response.json()
+    }).then(data=>{
+      console.log(data)
+      if(data.mensaje=="Sí se aceptó"){
+        Swal.fire({
+        title: "Se asigno al empleado!",
+        icon: "success",
+        draggable: true
+      });
+      obtenerAdministrarTicket()
+      
+      }
+    })
+    }
+    else{
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Campos vacios!"  
+      });
+    }
+  } catch (error) {
+    
+  }
+}
+
+function rechazarTicket(ticket){
+  var id_ticket= parseInt(ticket)
+  var modalRechazar = $('#modalRechazar');
+  modalRechazar.modal('show');
+  $("#txtMotivo").val('')
+  $("#btnRechazar").on("click",function(){
+    var motivo= document.getElementById("txtMotivo").value;
+    if(motivo==''){
+      throw new Error
+      (Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Agregue el motivo!"
+      }))
+    }else{
+      var datosRechazar={
+        ticket:id_ticket,
+        motivo:motivo
+      }
+      try {
+      fetch('/rechazarTicket',{
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json"
+        },
+        body:JSON.stringify(datosRechazar)
+      }).then(response=>{
+        if(!response.ok){
+          throw new Error(`ERROR HTTP: ${response.status}`)
+        }
+        return response.json()
+      }).then(data=>{
+        console.log(data.mensaje)
+        if(data.mensaje=="Sí se rechazo"){
+          Swal.fire({
+            title: "Rechazado correctamente!",
+            icon: "success",
+            draggable: true
+          });
+          obtenerAdministrarTicket()
+           modalRechazar.modal('hide');
+        }
+      })
+    } catch (error) {
+      
+    }
+  }
+  });
+}
 
 async function obtenerTicketsAceptados() {
   try{
@@ -275,7 +420,6 @@ async function obtenerTicketsAceptados() {
     });
   }
 }
-
 
 async function obtenerOperativoTicketsDiario(fecha) {
   try {
@@ -505,6 +649,7 @@ $("#btnConsultarPromedio").click(function(){
 
   }
 })
+
 
 
 

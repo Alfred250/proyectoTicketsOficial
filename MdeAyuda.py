@@ -263,7 +263,7 @@ class Base:
     def consultar_tickets_all(self):
         conexion= sql.connect("BD_MesadeAyuda.db")
         cursor= conexion.cursor()
-        cursor.execute("SELECT tickets.id_ticket, empleados.nombre, asuntos.titulo, tickets.descripcion, tickets.status, tickets.fecha_creacion FROM tickets INNER JOIN empleados ON empleados.id_empleado = tickets.id_empleado INNER JOIN asuntos ON asuntos.id_asunto = tickets.asunto")
+        cursor.execute("SELECT tickets.id_ticket, empleados.nombre, asuntos.titulo, tickets.descripcion, tickets.status, tickets.fecha_creacion FROM tickets INNER JOIN empleados ON empleados.id_empleado = tickets.id_empleado INNER JOIN asuntos ON asuntos.id_asunto = tickets.asunto WHERE status=1")
         columnas = [desc[0] for desc in cursor.description]
         resultado = cursor.fetchall()
         resultado_json = [dict(zip(columnas, fila)) for fila in resultado]
@@ -321,27 +321,54 @@ class Base:
             conexion.close()
 
     def aceptar_ticket(self,ticket,empleado,stiuacion,fecha_respuesta,fecha_resolucion,fecha_caducidad):
-            conexion= sql.connect("BD_MesadeAyuda.db")
-            cursor= conexion.cursor()
-            cursor.execute(f"INSERT INTO ticketaceptado (ticket, empleado, situacion,fecha_respuesta ,fecha_solucion, fecha_caducidad) VALUES ('{ticket}', '{empleado}', '{stiuacion}', '{fecha_respuesta}','{fecha_resolucion}', '{fecha_caducidad}')")
+        print(ticket)
+        conexion= sql.connect("BD_MesadeAyuda.db")
+        cursor= conexion.cursor()
+        fecha_respuesta=datetime.now()
+        cursor.execute(f"INSERT INTO ticketaceptado (ticket, empleado, situacion,fecha_respuesta ,fecha_solucion, fecha_caducidad) VALUES ('{ticket}', '{empleado}', '{stiuacion}', '{fecha_respuesta}','', '{fecha_caducidad}')")
+        cambios = cursor.execute("SELECT changes()").fetchone()[0]
+        if cambios != 0:
+            cursor.execute(f"UPDATE tickets SET status =1 WHERE id_ticket='{ticket}'")
             conexion.commit()
             conexion.close()
-
-    def rechazar_ticket(self,ticket,motivo,fecha_respuesta):
-            conexion= sql.connect("BD_MesadeAyuda.db")
-            cursor= conexion.cursor()
-            cursor.execute(f"INSERT INTO tickets_rechazados (id_ticket, motivo,fecha_respuesta) VALUES ('{ticket}', '{motivo}','{fecha_respuesta}')")
+            return {'mensaje': "Sí se aceptó"}
+        else:
             conexion.commit()
             conexion.close()
+            return {'mensaje': "No se aceptó"}
+        
 
-    def consultar_empleado_depto(self,departamento):
-           conexion= sql.connect("BD_MesadeAyuda.db")
-           cursor= conexion.cursor()
-           cursor.execute(f"SELECT empleados.id_empleado, empleados.nombre,puestos.descripcion, empleados.direccion, empleados.telefono, empleados.correo FROM empleados INNER JOIN puestos ON puestos.id_puesto = empleados.puesto INNER JOIN departamentos ON departamentos.id_departamento = puestos.departamento_id WHERE departamentos.nombre= '{departamento}'")
-           datos= cursor.fetchall()
-           conexion.close()
-           for i in datos:
-            print(i[0],i[1],i[2])
+    def rechazar_ticket(self,ticket,motivo):
+        conexion= sql.connect("BD_MesadeAyuda.db")
+        cursor= conexion.cursor()
+        fecha_respuesta= date.today()
+        cursor.execute(f"INSERT INTO tickets_rechazados (id_ticket, motivo,fecha_respuesta) VALUES ('{ticket}', '{motivo}','{fecha_respuesta}')")
+        cambios = cursor.execute("SELECT changes()").fetchone()[0]
+        if cambios != 0:
+            cursor.execute(f"UPDATE tickets SET status =0 WHERE id_ticket='{ticket}'")
+            conexion.commit()
+            conexion.close()
+            return {'mensaje': "Sí se rechazo"}
+        else:
+            conexion.commit()
+            conexion.close()
+            return {'mensaje': "No se rechazo"}
+
+    def consultar_empleado_depto(self,id_ticket):
+        conexion= sql.connect("BD_MesadeAyuda.db")
+        cursor= conexion.cursor()
+        cursor.execute(f"SELECT departamentos.nombre FROM tickets INNER JOIN asuntos ON asuntos.id_asunto = tickets.asunto INNER JOIN departamentos ON departamentos.id_departamento = asuntos.departamento WHERE id_ticket={id_ticket}")
+        datos= cursor.fetchall()
+        
+        for i in datos:
+            departamento= i[0]
+            print(departamento)
+        cursor.execute(f"SELECT empleados.id_empleado, empleados.nombre FROM empleados INNER JOIN puestos ON puestos.id_puesto = empleados.puesto INNER JOIN departamentos ON departamentos.id_departamento = puestos.departamento_id WHERE departamentos.nombre= '{departamento}'")
+        columnas = [desc[0] for desc in cursor.description]
+        resultado = cursor.fetchall()
+        resultado_json = [dict(zip(columnas, fila)) for fila in resultado]
+        conexion.close()
+        return json.dumps(resultado_json, ensure_ascii=False)
 
     def modificar(self):
             conexion= sql.connect("BD_MesadeAyuda.db")
@@ -350,6 +377,7 @@ class Base:
             conexion.commit()
             conexion.close()
 
+    
     def registrar_empleado(self,nombre, puesto, direccion, telefono, correo):
            empleado= [(nombre, puesto, direccion, telefono, correo)]
            conexion= sql.connect("BD_MesadeAyuda.db")
@@ -562,6 +590,14 @@ class Base:
            df.to_excel('Tickets_Aceptados.xlsx',index=False)
            conexion.close()
     
+    def revisar_tickets_asignados(self,empleado):
+            conexion= sql.connect("BD_MesadeAyuda.db")
+            cursor= conexion.cursor()
+            cursor.execute(f"SELECT tickets.id_ticket,asuntos.titulo, empleados.nombre, ticketaceptado.situacion,ticketaceptado.fecha_solucion ,tickets.fecha_creacion, ticketaceptado.fecha_respuesta, ticketaceptado.fecha_caducidad FROM ticketaceptado INNER JOIN tickets ON tickets.id_ticket = ticketaceptado.ticket INNER JOIN empleados ON empleados.id_empleado= ticketaceptado.empleado INNER JOIN asuntos ON asuntos.id_asunto = tickets.asunto INNER JOIN departamentos ON departamentos.id_departamento = asuntos.departamento WHERE ticketaceptado.empleado={empleado}")
+            datos= cursor.fetchall()
+            conexion.close()
+            for i in datos:
+                print(i)
 
     
     #insertar_ticket(3,1,"Olvide la Contraseña de Intranet",1,"05/06/25")

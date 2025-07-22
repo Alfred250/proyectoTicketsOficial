@@ -1,0 +1,79 @@
+/* Estructura general */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f8fafc;
+}
+
+/* Panel izquierdo */
+.left-panel {
+  background-color: #1f2937; /* gris grafito profesional */
+  color: #ffffff;
+  text-align: center;
+  padding: 40px;
+}
+
+.logo-img {
+  max-width: 150px;
+  height: auto;
+}
+
+.company-name {
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+.slogan {
+  font-weight: 400;
+  color: #d1d5db;
+}
+
+.mission-text {
+  max-width: 500px;
+  font-size: 1.1rem;
+  color: #e5e7eb;
+}
+
+/* Panel derecho */
+.right-panel {
+  background-color: #ffffff;
+}
+
+.login-card {
+  background-color: #f3f4f6;
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+}
+
+.login-card h3 {
+  font-weight: 600;
+  color: #111827;
+}
+
+.form-label {
+  font-weight: 500;
+  color: #374151;
+}
+
+.form-control {
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 1rem;
+  border: 1px solid #d1d5db;
+}
+
+.btn-block {
+  background-color: #0f766e; /* Verde institucional */
+  color: white;
+  font-weight: bold;
+  padding: 12px;
+  font-size: 1.1rem;
+  border: none;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+.btn-block:hover {
+  background-color: #0d5e58;
+}
