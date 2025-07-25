@@ -593,11 +593,12 @@ class Base:
     def revisar_tickets_asignados(self,empleado):
             conexion= sql.connect("BD_MesadeAyuda.db")
             cursor= conexion.cursor()
-            cursor.execute(f"SELECT tickets.id_ticket,asuntos.titulo, empleados.nombre, ticketaceptado.situacion,ticketaceptado.fecha_solucion ,tickets.fecha_creacion, ticketaceptado.fecha_respuesta, ticketaceptado.fecha_caducidad FROM ticketaceptado INNER JOIN tickets ON tickets.id_ticket = ticketaceptado.ticket INNER JOIN empleados ON empleados.id_empleado= ticketaceptado.empleado INNER JOIN asuntos ON asuntos.id_asunto = tickets.asunto INNER JOIN departamentos ON departamentos.id_departamento = asuntos.departamento WHERE ticketaceptado.empleado={empleado}")
-            datos= cursor.fetchall()
+            cursor.execute(f"SELECT tickets.id_ticket,asuntos.titulo, tickets.descripcion,empleados.nombre, ticketaceptado.situacion,ticketaceptado.fecha_solucion ,tickets.fecha_creacion, ticketaceptado.fecha_respuesta, ticketaceptado.fecha_caducidad FROM ticketaceptado INNER JOIN tickets ON tickets.id_ticket = ticketaceptado.ticket INNER JOIN empleados ON empleados.id_empleado= ticketaceptado.empleado INNER JOIN asuntos ON asuntos.id_asunto = tickets.asunto INNER JOIN departamentos ON departamentos.id_departamento = asuntos.departamento WHERE ticketaceptado.situacion!='Resuelto' and ticketaceptado.empleado={empleado}")
+            columnas= [col[0] for col in cursor.description]
+            datos=cursor.fetchall()
+            datos_json=[dict(zip(columnas,fila)) for fila in datos]
             conexion.close()
-            for i in datos:
-                print(i)
+            return json.dumps(datos_json, ensure_ascii=False)
 
     
     #insertar_ticket(3,1,"Olvide la Contraseña de Intranet",1,"05/06/25")

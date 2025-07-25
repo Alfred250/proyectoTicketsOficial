@@ -2,8 +2,10 @@ $(document).ready(function(){
 
 consultarDepartamentos();
 obtenerTicketsGenerados();
+obtenerTicketsAsignados()
 })
 const id_empleado = parseInt(localStorage.getItem("idEmpleadoGlobal"));
+const id_empleado_Global=parseInt(localStorage.getItem("idEmpleadoGlobal"));
 
 async function consultarDepartamentos() {
   
@@ -11,11 +13,11 @@ async function consultarDepartamentos() {
   var selectDepartamentosPromedio=document.getElementById("selectDepartamentoPromedio");
   fetch('/filtroDepartamento').then(response => response.json()).then(data => {
     for(var i in data){
+      console.log(data[i])
       var opcionDepas= document.createElement("option");
         opcionDepas.value=i;
         opcionDepas.text=data[i];
-        selectDepartamentos.add(opcionDepas);
-        selectDepartamentosPromedio.add(opcionDepas)
+        selectDepartamentos.append(opcionDepas);
     }
     });
 }
@@ -515,7 +517,7 @@ $("#btnConsultarMensualDepa").click(function(){
 });
 
 function obtenerOperativoTicketsCaducados(fecha_inicio, fecha_fin){
-  data={
+  var data={
     fecha_inicio:fecha_inicio,
     fecha_fin:fecha_fin
   }
@@ -601,13 +603,11 @@ $("#btnConsultarCaducados").click(function(){
 function obtenerOperativoTiempoRespuesta(departamentore, fecha_inicio, fecha_fin){
  
   console.log(departamentore)
-  data={
+  var data={
     departamento:departamentore, 
     fecha_inicio:fecha_inicio,
     fecha_fin:fecha_fin
   }
-  console.log(typeof(fecha_fin))
-  console.log(typeof(fecha_inicio))
   try {
     fetch('/operativoTiempoRespuesta',{
       method:"POST",
@@ -651,5 +651,70 @@ $("#btnConsultarPromedio").click(function(){
 })
 
 
+function obtenerTicketsAsignados() {
+  console.log(id_empleado_Global);
+  var datosAsignados = {
+    "id_ticket": parseInt(id_empleado_Global)
+  };
 
+  fetch('/ticketsAsignados', {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(datosAsignados)
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`HTTP ERROR: ${response.status}`);
+    }
+    return response.json();
+  })
+  .then(data => {
+    var divAsignados = document.getElementById("divAsignados");
+    var aAsignados= JSON.parse(data)
+    aAsignados.forEach(asignado=>{
+      var fechaAs=asignado.fecha_creacion 
+      fechaAsig=fechaAs.substring(0,10)
+      divAsignados.innerHTML+=`
+        <div class="card ticket-card mb-3 p-3 shadow-sm">
+          <div class="row align-items-center mb-2">
+            <div class="col-4">
+              <small class="text-muted">Fecha Asignaciòn:</small>
+              <div id="fecha">${fechaAsig}</div>
+            </div>
+            <div class="col-4">
+              <small class="text-muted">Fecha Caducidad:</small>
+              <div id="fecha_caducidad">${asignado.fecha_caducidad}</div>
+            </div>
+            <div class="col-4">
+              <label for="EmpleadoDisponible" class="form-label mb-1">Situacion:</label>
+              <select class="form-select form-select-sm" id="EmpleadoDisponible">
+                <option value="">Seleccione una opcion</option>
+                <option value="1">En revision</option>
+                <option value="2">En proceso</option>
+                <option value="3">Cancelado</option>
+                <option value="4">Completo</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row small">
+            <div class="col-4">
+              <strong>Problematica:</strong><br>
+              ${asignado.titulo}
+            </div>
+            <div class="col-4">
+              <strong>Detalle:</strong><br>
+              ${asignado.descripcion}
+            </div>
+          </div>
+        </div>
+      `
+    })
+  })
+  .catch(error => {
+    console.error('Error en la solicitud:', error);
+  });
+}
 

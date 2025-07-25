@@ -7,22 +7,25 @@ from routers.filtrosTicketsRouter import router as routerFiltrosTickets
 from models.regUser import RegistrarUsuario
 from data.conexionTablaUsuarios import DataBaseUser
 from routers.reporteOperativoRouter import router as routerOperativo
+from fastapi.middleware.cors import CORSMiddleware
+
 app = FastAPI(title="Las primeras pruebas")
 
-# Servir archivos estáticos
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-# Modelo para login
 class LoginData(BaseModel):
     usuario: int
     contrasena: str
-    
-# Usuarios simulados
-USUARIOS = {
-    "admin": "1234",
-    "user": "abcd"
-}
+
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/", tags=["pruebas"])
 def regresar_inicio():

@@ -6,6 +6,7 @@ from datetime import datetime
 from models.id_ticketsModel import IdTicket
 from models.asignarTicketModel import Asignacion
 from models.rechazarTicketModel import RechazarTicket
+from models.usuarioReg import IdUsuario
 
 router = APIRouter()
 
@@ -56,4 +57,10 @@ def asignarTicket(datos:Asignacion):
 @router.post('/rechazarTicket',tags=["tickets"])
 def rechazarTicket(datos:RechazarTicket):
     resultado= conexionTablaTickets.rechazarTicket(datos.ticket,datos.motivo)
+    return resultado
+
+@router.post('/ticketsAsignados', tags=["tickets"])
+def ticketsAsignados(datos: IdUsuario):
+    print("Se recibió la solicitud para obtener tickets asignados.")
+    resultado = conexionTablaTickets.ticketsAsignados(datos.id_empleado)
     return resultado

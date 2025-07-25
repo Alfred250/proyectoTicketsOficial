@@ -53,3 +53,7 @@ class ConexionTablaTickets:
     def rechazarTicket(self,ticket,motivo):
         ejecucion= self.conexionBase.rechazar_ticket(ticket,motivo)
         return ejecucion
+    
+    def ticketsAsignados(self,empleado):
+        ejecucion= self.conexionBase.revisar_tickets_asignados(empleado)
+        return ejecucion
