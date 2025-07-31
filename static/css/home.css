@@ -1,12 +1,12 @@
-/* --- FUENTES Y COLORES --- */
+
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap');
 
 :root {
-  --color-primario: #f4c542;       /* Amarillo dorado */
-  --color-secundario: #1e1e1e;     /* Gris oscuro */
-  --color-fondo: #f5f5f5;          /* Fondo claro */
-  --color-verde: #6b8e23;          /* Verde oliva */
-  --color-rojo: #a63d40;           /* Rojo óxido */
+  --color-primario: #f4c542;       
+  --color-secundario: #1e1e1e;     
+  --color-fondo: #f5f5f5;          
+  --color-verde: #6b8e23;       
+  --color-rojo: #a63d40;           
   --color-texto: #333;
   --radius: 16px;
 }
@@ -24,7 +24,6 @@ h1, h2, h3, h4, h5 {
   color: var(--color-secundario);
 }
 
-/* --- MENÚ LATERAL --- */
 .NavMenu {
   background-color: var(--color-secundario) !important;
   color: white;

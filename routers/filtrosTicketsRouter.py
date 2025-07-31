@@ -5,6 +5,7 @@ from data.conexionTablaDepartamento import ConexionTablaDepartamento
 from data.conexionTablaProblematicas import ConexionTablaProblematicas
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse, JSONResponse
+from models.usuarioReg import IdUsuario
 from pydantic import BaseModel
 router = APIRouter()
 
@@ -29,3 +30,10 @@ def consultarProblematicas(datos:Problematica):
         return JSONResponse(content=resultado)
     else:
         raise HTTPException(status_code=404, detail="No se encontraron registro")
+
+@router.post('/filtroProblematicasIdEmpleado', tags=["filtros"])
+def consultarProblemas(datos:IdUsuario):
+    tProblematicas= ConexionTablaProblematicas()
+    resultado= tProblematicas.selectProblematicasSinDepartamento(datos.id_empleado)
+    return JSONResponse(content=resultado)
+

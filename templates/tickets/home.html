@@ -42,7 +42,7 @@
                 </button>
             </li>
 
-            <li class="nav-item mb-2">
+            <li class="nav-item mb-2 ocultar">
               <div style="display: flex; align-items: center;">
                 <img src="/static/img/ajustes.png" style="width: 24px; height: 24px; margin-right: 8px;" title="ajuste">
                 <button onclick="mostrarApartado('Administrar')" style="background: none; border: none; padding: 0; color: white; cursor: pointer;" >
@@ -50,32 +50,46 @@
                 </button>
               </div>
             </li>
-            <li class="nav-item mb-2">
+            <li class="nav-item mb-2 ocultar">
               <div style="display: flex; align-items: center;">
                 <img src="/static/img/kyc.png" style="width: 24px; height: 24px; margin-right: 8px;" title="imagen">
                 <button onclick="mostrarApartado('Aceptados')" style="background: none; border: none; padding: 0; color: white; cursor: pointer;">
                   Tickets Aceptados
                 </button>
             </li>
-            <li class="nav-item mb-2">
+            <li class="nav-item mb-2 ocultar">
               <div style="display: flex; align-items: center;">
                 <img src="/static/img/rechazar.png" style="width: 24px; height: 24px; margin-right: 8px;" title="rechazar">
                 <button onclick="mostrarApartado('Rechazados')" style="background: none; border: none; padding: 0; color: white; cursor: pointer;">
                   Tickets Rechazados
                 </button>
             </li>
-            <li class="nav-item mb-2">
+            <li class="nav-item mb-2 ocultar">
               <div style="display: flex; align-items: center;">
                 <img src="/static/img/rechazar.png" style="width: 24px; height: 24px; margin-right: 8px;" title="rechazar">
                 <button onclick="mostrarApartado('reporteTickets')" style="background: none; border: none; padding: 0; color: white; cursor: pointer;">
                   Reporte Tickets
                 </button>
             </li>
-            <li class="nav-item mb-2">
+            <li class="nav-item mb-2 ocultar">
               <div style="display: flex; align-items: center;">
                 <img src="/static/img/rechazar.png" style="width: 24px; height: 24px; margin-right: 8px;" title="rechazar">
                 <button onclick="mostrarApartado('reporteTicketsOperativo')" style="background: none; border: none; padding: 0; color: white; cursor: pointer;">
                   Reporte Tickets Operativo
+                </button>
+            </li>
+            <li class="nav-item mb-2 ocultar">
+              <div style="display: flex; align-items: center;">
+                <img src="/static/img/rechazar.png" style="width: 24px; height: 24px; margin-right: 8px;" title="rechazar">
+                <button onclick="mostrarApartado('reporteTicketsFrame')" style="background: none; border: none; padding: 0; color: white; cursor: pointer;">
+                  Reporte Tickets Frame
+                </button>
+            </li>
+            <li class="nav-item mb-2 ocultar">
+              <div style="display: flex; align-items: center;">
+                <img src="/static/img/rechazar.png" style="width: 24px; height: 24px; margin-right: 8px;" title="rechazar">
+                <button onclick="mostrarApartado('reporteTicketsFrame2')" style="background: none; border: none; padding: 0; color: white; cursor: pointer;">
+                  Reporte Tickets Frame 2
                 </button>
             </li>
           </ul>
@@ -184,7 +198,7 @@
                     <div class="row mb-3">
                       <div class="col-6" style="text-align: center;">
                         <label for="admin-problema " >Problemáticas</label><br>
-                        <select class="form-select selectAdmin" aria-label="Disabled select example" id="admin-problema">
+                        <select class="form-select selectAdmin" aria-label="Disabled select example" id="selectProblemasAdmin">
                           <option selected>Selecciona una opcion</option>
                         </select>
                       </div>
@@ -204,18 +218,10 @@
               <div class="body mt-2" style="max-height: 800px; overflow-y: auto;"">
                 <div class="row mb-5">
                     <div class="row">
-                      <div class="col-5">
-                        <label for="Departamento">Departamento Origen</label>
-                        <select name="Departamento" id="selectDepa">
+                      <div class="col-12" style="margin-left: 60px;">
+                        <label for="problematica">Problematica</label>
+                        <select name="selectProblematica" id="selecProblematica">
                           <option value="">Selecciona una opcion</option>
-                          <option value="TI">TI</option>
-                        </select>
-                      </div>
-                      <div class="col-5">
-                        <label for="Departamento">Departamento Destinado</label>
-                        <select name="Departamento" id="selectDepa">
-                          <option value="">Selecciona una opcion</option>
-                          <option value="TI">TI</option>
                         </select>
                       </div>
                     </div>
@@ -258,48 +264,30 @@
                 <div class="row mb-5">
                     <div class="row">
                       <div class="col-5">
-                        <label for="Departamento">Departamento Origen</label>
-                        <select name="Departamento" id="selectDepa">
+                        <label for="problema">Filtrar por problematica</label>
+                        <select name="selectProblematicaRechazados" id="selectProblematicaRechazados">
                           <option value="">Selecciona una opcion</option>
-                          <option value="TI">TI</option>
-                        </select>
-                      </div>
-                      <div class="col-5">
-                        <label for="Departamento">Departamento Destinado</label>
-                        <select name="Departamento" id="selectDepa">
-                          <option value="">Selecciona una opcion</option>
-                          <option value="TI">TI</option>
                         </select>
                       </div>
                     </div>
                     
                 </div>
-                <div class="row mt-2">
-                  <div class="card" style="text-align: center;">
+                <div class="row mt-2" style="justify-content: center;">
+                  <div class="card" style="text-align: center; min-width: 90%;">
                   <h5 class="card-header">Tickets rechazados</h5>
                   <div class="table-responsive text-nowrap">
                     <table class="table">
                       <thead>
                         <tr>
-                          <th>Departamento</th>
-                          <th>Problematica</th>
+                          <th>Id Ticket</th>
                           <th>Detalle</th>
-                          <th>Fecha Aceptacion</th>
-                          <th>Id Empleado solicitud</th>
-                          <th>Id Empleado asignado</th>
-                          <th>Estado</th>
+                          <th>Motivo</th>
+                          <th>Fecha creacion</th>
+                          <th>Fecha de rechazo</th>
                         </tr>
                       </thead>
-                      <tbody class="table-border-bottom-0">
-                        <tr>
-                          <th>Si</th>
-                          <th>Si</th>
-                          <th>Si</th>
-                          <th>Si</th>
-                          <th>Si</th>
-                          <th>Si</th>
-                          <th>Si</th>
-                        </tr>
+                      <tbody class="table-border-bottom-0" id="tbodyRechazados">
+                        
                       </tbody>
                     </table>
                   </div>
@@ -433,6 +421,41 @@
 
             </div>
           </div>
+
+          <div id="reporteTicketsFrame" class="mt-3" style="display: none;">
+            <div class="container-fluid">
+              <div class="page-header mb-3">
+                  <h3>Reporte Tickets ifram</h3>
+              </div>
+                <div class="row" style="margin-bottom: 30px;">
+                  <iframe title="Reportes Nivel Táctico_2" width="90%" height="350px" src="https://app.powerbi.com/view?r=eyJrIjoiYjZjNGVjOTYtZGI2My00YWI0LWFhOWQtYTBjMDhiNDgzYzgwIiwidCI6IjUzM2M0MjM2LWI3ZTYtNDg0My1hOTRlLTU1NmI3MWE5ZmNjYyJ9&pageName=d5b7646996289b27e489" frameborder="0" allowFullScreen="true"></iframe>
+                </div>
+                
+                <div class="row">
+                  <iframe title="Reportes Nivel Táctico" width="90%" height="350px" src="https://app.powerbi.com/view?r=eyJrIjoiODJmNzFiN2MtZTQ1MC00NWEwLWFmNmYtMjI5OGZmMGZjMzkzIiwidCI6IjUzM2M0MjM2LWI3ZTYtNDg0My1hOTRlLTU1NmI3MWE5ZmNjYyJ9" frameborder="0" allowFullScreen="true"></iframe>
+                </div>
+              
+
+            </div>
+          </div>
+
+          <div id="reporteTicketsFrame2" class="mt-3" style="display: none;">
+            <div class="container-fluid">
+              <div class="page-header mb-3">
+                  <h3>Reporte Tickets iframe 2</h3>
+              </div>
+                <div class="row" style="margin-bottom: 30px;">
+                  <iframe title="Reportes_Estrategicos" width="600" height="373.5" src="https://app.powerbi.com/view?r=eyJrIjoiNzBiNjI4OWItMWQ0Ny00MGY0LTk5MGEtZmZlNDk2MzMyYjdiIiwidCI6IjUzM2M0MjM2LWI3ZTYtNDg0My1hOTRlLTU1NmI3MWE5ZmNjYyJ9" frameborder="0" allowFullScreen="true"></iframe>
+                </div>
+                
+                <div class="row">
+                  <iframe title="Reportes_Estrategicos_2" width="600" height="373.5" src="https://app.powerbi.com/view?r=eyJrIjoiNmZmOWI5N2MtYzUzZi00OTRmLTgzNDYtOWJhZmFkMGRjMTBiIiwidCI6IjUzM2M0MjM2LWI3ZTYtNDg0My1hOTRlLTU1NmI3MWE5ZmNjYyJ9" frameborder="0" allowFullScreen="true"></iframe>
+                </div>
+              
+
+            </div>
+          </div>
+          
 
         </main>
       </div>

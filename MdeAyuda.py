@@ -593,12 +593,24 @@ class Base:
     def revisar_tickets_asignados(self,empleado):
             conexion= sql.connect("BD_MesadeAyuda.db")
             cursor= conexion.cursor()
-            cursor.execute(f"SELECT tickets.id_ticket,asuntos.titulo, tickets.descripcion,empleados.nombre, ticketaceptado.situacion,ticketaceptado.fecha_solucion ,tickets.fecha_creacion, ticketaceptado.fecha_respuesta, ticketaceptado.fecha_caducidad FROM ticketaceptado INNER JOIN tickets ON tickets.id_ticket = ticketaceptado.ticket INNER JOIN empleados ON empleados.id_empleado= ticketaceptado.empleado INNER JOIN asuntos ON asuntos.id_asunto = tickets.asunto INNER JOIN departamentos ON departamentos.id_departamento = asuntos.departamento WHERE ticketaceptado.situacion!='Resuelto' and ticketaceptado.empleado={empleado}")
+            cursor.execute(f"SELECT DISTINCT tickets.id_ticket,asuntos.titulo, tickets.descripcion,empleados.nombre, ticketaceptado.situacion,ticketaceptado.fecha_solucion ,tickets.fecha_creacion, ticketaceptado.fecha_respuesta, ticketaceptado.fecha_caducidad FROM ticketaceptado INNER JOIN tickets ON tickets.id_ticket = ticketaceptado.ticket INNER JOIN empleados ON empleados.id_empleado= ticketaceptado.empleado INNER JOIN asuntos ON asuntos.id_asunto = tickets.asunto INNER JOIN departamentos ON departamentos.id_departamento = asuntos.departamento WHERE ticketaceptado.situacion like '%Observacion%' and ticketaceptado.empleado={empleado}")
             columnas= [col[0] for col in cursor.description]
             datos=cursor.fetchall()
             datos_json=[dict(zip(columnas,fila)) for fila in datos]
             conexion.close()
             return json.dumps(datos_json, ensure_ascii=False)
+        
+    def cambiar_situacion_aceptados(self,id_ticket,situacion):
+        conexion = sql.connect("BD_MesadeAyuda.db")
+        cursor=conexion.cursor()
+        cursor.execute(f"UPDATE ticketaceptado SET situacion={situacion} WHERE ticket= {id_ticket}")
+        cambio= cursor.rowcount
+        conexion.close()
+        if(cambio==1):
+            return json.dumps({"mensaje":"Modificado exitosamente"})
+        else:
+            return json.dumps({"mensaje":"Error en el servidor,no se modifico"})
+        
 
     
     #insertar_ticket(3,1,"Olvide la Contraseña de Intranet",1,"05/06/25")

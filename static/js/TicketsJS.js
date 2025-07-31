@@ -2,8 +2,17 @@ $(document).ready(function(){
 
 consultarDepartamentos();
 obtenerTicketsGenerados();
-obtenerTicketsAsignados()
+obtenerTicketsAsignados();
+obtenerTicketsRechazados();
+obtenerDiferentesProble();
 })
+
+// function ocultar(){
+//   document.querySelectorAll('.ocultar').forEach(function(el) {
+//     el.style.display = 'none';
+//   });
+// }
+
 const id_empleado = parseInt(localStorage.getItem("idEmpleadoGlobal"));
 const id_empleado_Global=parseInt(localStorage.getItem("idEmpleadoGlobal"));
 
@@ -13,11 +22,16 @@ async function consultarDepartamentos() {
   var selectDepartamentosPromedio=document.getElementById("selectDepartamentoPromedio");
   fetch('/filtroDepartamento').then(response => response.json()).then(data => {
     for(var i in data){
-      console.log(data[i])
       var opcionDepas= document.createElement("option");
         opcionDepas.value=i;
         opcionDepas.text=data[i];
         selectDepartamentos.append(opcionDepas);
+    }
+    for(var i in data){
+      var opcionDepas= document.createElement("option");
+        opcionDepas.value=i;
+        opcionDepas.text=data[i];
+        selectDepartamentosPromedio.append(opcionDepas);
     }
     });
 }
@@ -123,7 +137,9 @@ function mostrarApartado(idVista) {
     "Aceptados", 
     "Rechazados",
     "reporteTickets",
-    "reporteTicketsOperativo"
+    "reporteTicketsOperativo",
+    "reporteTicketsFrame",
+    "reporteTicketsFrame2"
   ];
 
   secciones.forEach(seccion => {
@@ -388,7 +404,6 @@ function rechazarTicket(ticket){
 
 async function obtenerTicketsAceptados() {
   try{
-    console.log("entro al js de aceptados")
     await fetch(`/ticketsAceptados?id_empleado=${id_empleado}`).then(response=>{
       if(!response.ok){
         throw new Error(`HTTP ERROR ${response.status}`)
@@ -672,6 +687,7 @@ function obtenerTicketsAsignados() {
   })
   .then(data => {
     var divAsignados = document.getElementById("divAsignados");
+    divAsignados.innerHTML=''
     var aAsignados= JSON.parse(data)
     aAsignados.forEach(asignado=>{
       var fechaAs=asignado.fecha_creacion 
@@ -688,18 +704,16 @@ function obtenerTicketsAsignados() {
               <div id="fecha_caducidad">${asignado.fecha_caducidad}</div>
             </div>
             <div class="col-4">
-              <label for="EmpleadoDisponible" class="form-label mb-1">Situacion:</label>
-              <select class="form-select form-select-sm" id="EmpleadoDisponible">
-                <option value="">Seleccione una opcion</option>
-                <option value="1">En revision</option>
-                <option value="2">En proceso</option>
-                <option value="3">Cancelado</option>
-                <option value="4">Completo</option>
+              <label for="cbSituacion" class="form-label mb-1">Situacion:</label>
+              <select class="form-select form-select-sm" id="cbSituacion">
+                <option value="${asignado.situacion}">${asignado.situacion}</option>
+                <option value="Aceptado">Aceptado</option>
+                <option value="Cancelado">Cancelado</option>
               </select>
             </div>
           </div>
 
-          <div class="row small">
+          <div class="row large">
             <div class="col-4">
               <strong>Problematica:</strong><br>
               ${asignado.titulo}
@@ -707,6 +721,9 @@ function obtenerTicketsAsignados() {
             <div class="col-4">
               <strong>Detalle:</strong><br>
               ${asignado.descripcion}
+            </div>
+            <div class="col-4">
+              <button class="button" style="color:black; background-color:green;max-width:90%" onclick="cambiarSituacion('${asignado.id_ticket}')">Aceptar</button>
             </div>
           </div>
         </div>
@@ -718,3 +735,114 @@ function obtenerTicketsAsignados() {
   });
 }
 
+
+
+async function obtenerTicketsRechazados() {
+  try{
+    await fetch(`/ticketsRechazados?id_empleado=${id_empleado}`).then(response=>{
+      if(!response.ok){
+        throw new Error(`HTTP ERROR ${response.status}`)
+      }
+      return response.json() 
+    }).then(data=>{
+      var tbodyRechazados = document.getElementById("tbodyRechazados");
+      var rechazadosJson= JSON.parse(data)
+      for(var i =0; i<rechazadosJson.length;i++){
+        var contenido=`
+          <tr>
+            <td>${rechazadosJson[i].id_ticket}</td>
+            <td>${rechazadosJson[i].titulo}</td>
+            <td>${rechazadosJson[i].motivo}</td>
+            <td>${rechazadosJson[i].fecha_creacion}</td>
+            <td>${rechazadosJson[i].fecha_respuesta}</td>
+          </tr>
+        `
+        tbodyRechazados.innerHTML += contenido
+      }
+
+    })
+  }catch{
+    Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text: "Algo salio mal, no se pudo obtener los tickets Rechazados!",
+      footer: '<a href="#">Why do I have this issue?</a>'
+    });
+  }
+}
+
+function cambiarSituacion(id_ticket){
+  console.log(id_ticket)
+  try {
+    fetch('/modificarSituacion',{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify()
+    })
+  } catch (error) {
+    
+  }
+}
+
+
+// async function consultarDepartamentos() {
+  
+//   var selectDepaAceptados=document.getElementById("selectDepaAceptados");
+//   fetch('/filtroDepartamento').then(response => response.json()).then(data => {
+//     for(var i in data){
+//       var opcionDepas= document.createElement("option");
+//         opcionDepas.value=i;
+//         opcionDepas.text=data[i];
+//         selectDepaAceptados.append(opcionDepas);
+//     }
+//     });
+// }
+
+
+function obtenerDiferentesProble(){ //selecciona todas las problematicas en base al id del empleado
+  
+  oIdEmpleado={
+    id_empleado: id_empleado_Global
+  }
+  console.log(oIdEmpleado)
+  fetch('/filtroProblematicasIdEmpleado',{
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json"
+    },
+    body:JSON.stringify(oIdEmpleado)
+  }).then(response=>{
+    if(!response.ok){
+      throw new Error(`HTTP ERROR: ${response.status}`)
+    }
+    return response.json()
+  }).then(data=>{
+    var problematicas = JSON.parse(data)
+    console.log(problematicas)
+    var selecProblematica= document.getElementById("selecProblematica");
+    var selectProblematicaRechazados= document.getElementById("selectProblematicaRechazados");
+    var selectProblemasAdmin = document.getElementById("selectProblemasAdmin");
+    selecProblematica.innerHTML=''
+    selecProblematica.append('<option value="">Selecciona una opcion</option>')
+    problematicas.forEach(problema=>{
+      var opt= document.createElement('option')
+      opt.value=problema.titulo
+      opt.text=problema.titulo
+      selecProblematica.append(opt)
+    })
+    problematicas.forEach(problema=>{
+      var opt= document.createElement('option')
+      opt.value=problema.titulo
+      opt.text=problema.titulo
+      selectProblematicaRechazados.append(opt)
+    })
+    problematicas.forEach(problema=>{
+      var opt= document.createElement('option')
+      opt.value=problema.titulo
+      opt.text=problema.titulo
+      selectProblemasAdmin.append(opt)
+    })
+  })
+}

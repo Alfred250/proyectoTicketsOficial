@@ -7,6 +7,7 @@ from models.id_ticketsModel import IdTicket
 from models.asignarTicketModel import Asignacion
 from models.rechazarTicketModel import RechazarTicket
 from models.usuarioReg import IdUsuario
+from models.modificarSituacionModel import SitucionModificar
 
 router = APIRouter()
 
@@ -64,3 +65,14 @@ def ticketsAsignados(datos: IdUsuario):
     print("Se recibió la solicitud para obtener tickets asignados.")
     resultado = conexionTablaTickets.ticketsAsignados(datos.id_empleado)
     return resultado
+
+@router.get('/ticketsRechazados',tags=["tickets"])
+def ticketsRechazados(id_empleado:int):
+    datos=conexionTablaTickets.ticketsRechazados(id_empleado)
+    return JSONResponse(content=datos)
+
+@router.post('/modificarSituacion',tags=["tickets"])
+def modificarSituacion(datos:SitucionModificar):
+    resultado=conexionTablaTickets.modificarSituacion(datos.id_ticket,datos.situacion)
+    return resultado
+

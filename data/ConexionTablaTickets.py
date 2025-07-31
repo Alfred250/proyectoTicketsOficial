@@ -27,6 +27,8 @@ class ConexionTablaTickets:
             print("Error base de datos: ", e)
             return str(e)
 
+    def obtenerRolEmpleado(self,id_Empleado):
+        conexio= self.conexionBase #la usaremos para obtenner el rol dell empleado y poder mostrar los distintos endPoints  
         
     def insertarTicket(self,id_empleado,asunto,descripcion):
         fecha_hoy = date.today()
@@ -57,3 +59,13 @@ class ConexionTablaTickets:
     def ticketsAsignados(self,empleado):
         ejecucion= self.conexionBase.revisar_tickets_asignados(empleado)
         return ejecucion
+
+    def ticketsRechazados(self,id_empleado):
+        ejecucuion= self.conexionBase.consultar_tickets_rechazados(id_empleado)
+        return ejecucuion
+    
+    def modificarSituacion(self,id_ticket,situacion):
+        ejecucion= self.conexionBase.cambiar_situacion_aceptados(id_ticket,situacion)
+        return ejecucion
+    
+    
