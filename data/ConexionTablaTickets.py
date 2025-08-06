@@ -44,7 +44,7 @@ class ConexionTablaTickets:
         ejecucion= self.conexionBase.consultar_tickets_aceptados(id_empleado)
         return ejecucion
         
-    def ticketsAsignados(self,id_ticket):
+    def EmpleadosAsignados(self,id_ticket):
         ejecucion= self.conexionBase.consultar_empleado_depto(id_ticket)
         return ejecucion
     
@@ -66,6 +66,10 @@ class ConexionTablaTickets:
     
     def modificarSituacion(self,id_ticket,situacion):
         ejecucion= self.conexionBase.cambiar_situacion_aceptados(id_ticket,situacion)
+        return ejecucion
+    
+    def consultarPuesto(self,id_empleado):
+        ejecucion=self.conexionBase.consultar_puesto_empleado(id_empleado)
         return ejecucion
     
     

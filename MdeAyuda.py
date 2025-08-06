@@ -593,7 +593,7 @@ class Base:
     def revisar_tickets_asignados(self,empleado):
             conexion= sql.connect("BD_MesadeAyuda.db")
             cursor= conexion.cursor()
-            cursor.execute(f"SELECT DISTINCT tickets.id_ticket,asuntos.titulo, tickets.descripcion,empleados.nombre, ticketaceptado.situacion,ticketaceptado.fecha_solucion ,tickets.fecha_creacion, ticketaceptado.fecha_respuesta, ticketaceptado.fecha_caducidad FROM ticketaceptado INNER JOIN tickets ON tickets.id_ticket = ticketaceptado.ticket INNER JOIN empleados ON empleados.id_empleado= ticketaceptado.empleado INNER JOIN asuntos ON asuntos.id_asunto = tickets.asunto INNER JOIN departamentos ON departamentos.id_departamento = asuntos.departamento WHERE ticketaceptado.situacion like '%Observacion%' and ticketaceptado.empleado={empleado}")
+            cursor.execute(f"SELECT DISTINCT tickets.id_ticket,asuntos.titulo, tickets.descripcion,empleados.nombre, ticketaceptado.situacion,ticketaceptado.fecha_solucion ,tickets.fecha_creacion, ticketaceptado.fecha_respuesta, ticketaceptado.fecha_caducidad FROM ticketaceptado INNER JOIN tickets ON tickets.id_ticket = ticketaceptado.ticket INNER JOIN empleados ON empleados.id_empleado= ticketaceptado.empleado INNER JOIN asuntos ON asuntos.id_asunto = tickets.asunto INNER JOIN departamentos ON departamentos.id_departamento = asuntos.departamento WHERE (ticketaceptado.situacion like '%En observacion%' or ticketaceptado.situacion like '%Aceptado%')and ticketaceptado.empleado={empleado}")
             columnas= [col[0] for col in cursor.description]
             datos=cursor.fetchall()
             datos_json=[dict(zip(columnas,fila)) for fila in datos]
@@ -603,14 +603,24 @@ class Base:
     def cambiar_situacion_aceptados(self,id_ticket,situacion):
         conexion = sql.connect("BD_MesadeAyuda.db")
         cursor=conexion.cursor()
-        cursor.execute(f"UPDATE ticketaceptado SET situacion={situacion} WHERE ticket= {id_ticket}")
-        cambio= cursor.rowcount
+        cursor.execute(f"UPDATE ticketaceptado SET situacion = ? WHERE ticket = ?", (situacion, id_ticket))
+        conexion.commit() 
+        cambio = cursor.execute("SELECT changes()").fetchone()[0]
+        print("cambio",cambio)
         conexion.close()
         if(cambio==1):
             return json.dumps({"mensaje":"Modificado exitosamente"})
         else:
             return json.dumps({"mensaje":"Error en el servidor,no se modifico"})
-        
+    
+    
+    def consultar_puesto_empleado(self,id_empleado):
+        conexion= sql.connect("Bd_MesadeAyuda.db")
+        cursor=conexion.cursor()
+        cursor.execute(f"SELECT A.descripcion FROM puestos A INNER JOIN empleados B on A.id_puesto = B.puesto WHERE B.id_empleado ={id_empleado}")
+        resultado = cursor.fetchone()  
+        conexion.close()
+        return json.dumps({"puesto":resultado},ensure_ascii=False)
 
     
     #insertar_ticket(3,1,"Olvide la Contraseña de Intranet",1,"05/06/25")

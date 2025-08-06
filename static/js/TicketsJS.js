@@ -1,20 +1,48 @@
 $(document).ready(function(){
-
+ocultar()
 consultarDepartamentos();
 obtenerTicketsGenerados();
 obtenerTicketsAsignados();
-obtenerTicketsRechazados();
+obtenerTicketsRechazados("ninguno");
 obtenerDiferentesProble();
 })
 
-// function ocultar(){
-//   document.querySelectorAll('.ocultar').forEach(function(el) {
-//     el.style.display = 'none';
-//   });
-// }
-
 const id_empleado = parseInt(localStorage.getItem("idEmpleadoGlobal"));
 const id_empleado_Global=parseInt(localStorage.getItem("idEmpleadoGlobal"));
+function ocultar(){
+    var oIdEmpleadoPuesto={
+      id_empleado: id_empleado_Global
+    }
+  try {
+    fetch('/consultarPuesto',{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify(oIdEmpleadoPuesto)
+    }).then(response=>{
+      if(!response.ok){
+        throw new Error(`ERROR HTTP ${response.status}`)
+      }
+      return response.json()
+    }).then(data=>{
+      var puestoJson=JSON.parse(data)
+      var puesto= puestoJson.puesto[0]
+      console.log(puesto)
+      if(puesto.includes("Gerente") || puesto.includes("Supervisor") || puesto.includes("Jefe")){
+          
+      }else{
+      document.querySelectorAll('.ocultarOperativos').forEach(function(el) {
+            el.style.display = 'none';
+          });
+      }
+    })
+  } catch (error) {
+    
+  }
+
+}
+
 
 async function consultarDepartamentos() {
   
@@ -149,10 +177,10 @@ function mostrarApartado(idVista) {
   const vistaActiva = document.getElementById(idVista);
   if (vistaActiva) vistaActiva.style.display = 'block';
   if(idVista='Administrar'){
-    obtenerAdministrarTicket()
+    obtenerAdministrarTicket("ninguno")
   }
   if(idVista='Aceptados'){
-    obtenerTicketsAceptados()
+    obtenerTicketsAceptados("ninguno")
   }
 }
 
@@ -192,8 +220,7 @@ async function obtenerTicketsGenerados() {
 function obtenerEmpleadoAsignar(id_ticket, selectElement) {
   const id_ticketParse = parseInt(id_ticket);
   const datosAsignados = { id_ticket: id_ticketParse };
-
-  fetch('/ticketsAsignados', {
+  fetch('/EmpleadosAsignados', {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -222,7 +249,7 @@ function obtenerEmpleadoAsignar(id_ticket, selectElement) {
   });
 }
 
- function obtenerAdministrarTicket(){
+function obtenerAdministrarTicket(problema){
   try{
     fetch(`/administrarTickets?id_empleado=${id_empleado}`).then(response=>{
       if (!response.ok){
@@ -232,6 +259,9 @@ function obtenerEmpleadoAsignar(id_ticket, selectElement) {
     }).then(data=>{
       var administrarJson= JSON.parse(data) 
       var bodyAdministrar= document.getElementById("divAdministrador");
+      if(problema!=''  &&  problema !="ninguno"){
+        administrarJson = administrarJson.filter(ticket => ticket.titulo === problema)
+      }
       for(var i=0; i<administrarJson.length;i++){
         bodyAdministrar.innerHTML+=
         `
@@ -260,7 +290,7 @@ function obtenerEmpleadoAsignar(id_ticket, selectElement) {
                             <div class="row small">
                               <div class="col-5">
                                 <strong>Problemática:</strong><br>
-                                ${administrarJson[i].descripcion}
+                                ${administrarJson[i].titulo}
                               </div>
                               <div class="col-7">
                                 <strong>Descripción:</strong><br>
@@ -335,7 +365,7 @@ function asignarTicket(ticket,fecha_creacion){
         icon: "success",
         draggable: true
       });
-      obtenerAdministrarTicket()
+      obtenerAdministrarTicket("ninguno")
       
       }
     })
@@ -402,7 +432,7 @@ function rechazarTicket(ticket){
   });
 }
 
-async function obtenerTicketsAceptados() {
+async function obtenerTicketsAceptados(problema) {
   try{
     await fetch(`/ticketsAceptados?id_empleado=${id_empleado}`).then(response=>{
       if(!response.ok){
@@ -411,7 +441,11 @@ async function obtenerTicketsAceptados() {
       return response.json() 
     }).then(data=>{
       var bodyAceptados = document.getElementById("bodyAceptados");
+      bodyAceptados.innerHTML='';
       var aceptadosJson= JSON.parse(data)
+      if(problema!='' || problema !="ninguno"){
+        aceptadosJson = aceptadosJson.filter(ticket => ticket.titulo === problema)
+      }
       for(var i =0; i<aceptadosJson.length;i++){
         var contenido=`
           <tr>
@@ -667,9 +701,8 @@ $("#btnConsultarPromedio").click(function(){
 
 
 function obtenerTicketsAsignados() {
-  console.log(id_empleado_Global);
   var datosAsignados = {
-    "id_ticket": parseInt(id_empleado_Global)
+    "id_empleado": parseInt(id_empleado_Global)
   };
 
   fetch('/ticketsAsignados', {
@@ -705,10 +738,8 @@ function obtenerTicketsAsignados() {
             </div>
             <div class="col-4">
               <label for="cbSituacion" class="form-label mb-1">Situacion:</label>
-              <select class="form-select form-select-sm" id="cbSituacion">
-                <option value="${asignado.situacion}">${asignado.situacion}</option>
-                <option value="Aceptado">Aceptado</option>
-                <option value="Cancelado">Cancelado</option>
+              <select class="form-select form-select-sm cbSituacion" data-id-situacion="${asignado.situacion}" data-id-ticketAsig="${asignado.id_ticket}">
+                <option value="${asignado.situacion}">${asignado.situacion}</option>}
               </select>
             </div>
           </div>
@@ -729,6 +760,21 @@ function obtenerTicketsAsignados() {
         </div>
       `
     })
+    
+    document.querySelectorAll('.cbSituacion').forEach(combo=>{
+      const situacion= combo.getAttribute("data-id-situacion")
+      if(situacion==="En observacion"){
+        combo.innerHTML+=`
+          <option value="Aceptado">Aceptado</option>
+          <option value="Cancelado">Cancelado</option>
+        `
+      }
+      else if(situacion==="Aceptado"){
+        combo.innerHTML+=`
+          <option value="Resuelto">Resuelto</option>
+        `
+      }
+    })
   })
   .catch(error => {
     console.error('Error en la solicitud:', error);
@@ -737,7 +783,7 @@ function obtenerTicketsAsignados() {
 
 
 
-async function obtenerTicketsRechazados() {
+async function obtenerTicketsRechazados(problema) {
   try{
     await fetch(`/ticketsRechazados?id_empleado=${id_empleado}`).then(response=>{
       if(!response.ok){
@@ -745,8 +791,13 @@ async function obtenerTicketsRechazados() {
       }
       return response.json() 
     }).then(data=>{
-      var tbodyRechazados = document.getElementById("tbodyRechazados");
       var rechazadosJson= JSON.parse(data)
+      var tbodyRechazados = document.getElementById("tbodyRechazados");
+      tbodyRechazados.innerHTML = '';
+      if (problema !== "ninguno" && problema !== '') {
+        rechazadosJson = rechazadosJson.filter(ticket => ticket.titulo === problema);
+        console.log("JSON original:", rechazadosJson);
+      }
       for(var i =0; i<rechazadosJson.length;i++){
         var contenido=`
           <tr>
@@ -771,20 +822,81 @@ async function obtenerTicketsRechazados() {
   }
 }
 
-function cambiarSituacion(id_ticket){
-  console.log(id_ticket)
-  try {
-    fetch('/modificarSituacion',{
-      method:"POST",
-      headers:{
-        "Content-Type":"application/json"
-      },
-      body:JSON.stringify()
+function cambiarSituacion(id_ticket) {
+  var select = document.querySelector(`[data-id-ticketAsig="${id_ticket}"]`).value;
+  var idTicket = parseInt(id_ticket);
+
+  if (select !== "Cancelado") {
+    var nuevaSituacion = {
+      id_ticket: idTicket,
+      situacion: select
+    };
+
+    fetch('/modificarSituacion', {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(nuevaSituacion)
     })
-  } catch (error) {
-    
+    .then(response => {
+      if (!response.ok) throw new Error(`ERROR: ${response.status}`);
+      return response.json();
+    })
+    .then(data => {
+      var mensaje= JSON.parse(data)
+      console.log(mensaje)
+      mensaje=mensaje.mensaje
+      if(mensaje.includes("exitosamente")) {
+        console.log("sí se modificó");
+        obtenerTicketsAsignados();
+        Swal.fire({ title: "Modificación exitosa!", icon: "success" });
+      }
+    });
+  } else {
+    const modalCancelar = $('#modalCancelar');
+    $('#btnCancelar').data("ticket-id", idTicket); 
+    modalCancelar.modal('show');
   }
 }
+
+
+$("#btnCancelar").click(function() {
+  const idTicket = $(this).data("ticket-id"); 
+  const motivo = document.getElementById("txtMotivoCancelacion").value;
+
+  if (motivo.trim() === "") {
+    Swal.fire({
+      icon: "warning",
+      title: "Falta el motivo",
+      text: "Debes escribir un motivo para cancelar el ticket."
+    });
+    return;
+  }
+
+  const nuevaSituacion = {
+    id_ticket: idTicket,
+    situacion: "Cancelado",
+    motivo: motivo
+  };
+
+  fetch('/modificarSituacion', {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(nuevaSituacion)
+  })
+  .then(response => {
+    if (!response.ok) throw new Error(`ERROR: ${response.status}`);
+    return response.json();
+  })
+  .then(data => {
+    console.log(data)
+    if (data.mensaje="Modificado exitosamente") {
+      $('#modalCancelar').modal('hide'); 
+      obtenerTicketsAsignados();
+      Swal.fire({ title: "Ticket cancelado!", icon: "success" });
+    }
+  });
+});
+
 
 
 // async function consultarDepartamentos() {
@@ -806,7 +918,6 @@ function obtenerDiferentesProble(){ //selecciona todas las problematicas en base
   oIdEmpleado={
     id_empleado: id_empleado_Global
   }
-  console.log(oIdEmpleado)
   fetch('/filtroProblematicasIdEmpleado',{
     method:"POST",
     headers:{
@@ -820,17 +931,23 @@ function obtenerDiferentesProble(){ //selecciona todas las problematicas en base
     return response.json()
   }).then(data=>{
     var problematicas = JSON.parse(data)
-    console.log(problematicas)
-    var selecProblematica= document.getElementById("selecProblematica");
+    var selectProblematicaAceptados= document.getElementById("selectProblematicaAceptados");
     var selectProblematicaRechazados= document.getElementById("selectProblematicaRechazados");
     var selectProblemasAdmin = document.getElementById("selectProblemasAdmin");
-    selecProblematica.innerHTML=''
-    selecProblematica.append('<option value="">Selecciona una opcion</option>')
+
+    selectProblematicaAceptados.innerHTML=''
+    selectProblematicaRechazados.innerHTML=''
+    selectProblemasAdmin.innerHTML=''
+
+    selectProblematicaAceptados.innerHTML = '<option value="">Selecciona una opcion</option>';
+    selectProblematicaRechazados.innerHTML = '<option value="">Selecciona una opcion</option>';
+    selectProblemasAdmin.innerHTML = '<option value="">Selecciona una opcion</option>';
+
     problematicas.forEach(problema=>{
       var opt= document.createElement('option')
       opt.value=problema.titulo
       opt.text=problema.titulo
-      selecProblematica.append(opt)
+      selectProblematicaAceptados.append(opt)
     })
     problematicas.forEach(problema=>{
       var opt= document.createElement('option')
@@ -846,3 +963,39 @@ function obtenerDiferentesProble(){ //selecciona todas las problematicas en base
     })
   })
 }
+
+$("#selectProblematicaRechazados").change(function(){
+  var problematica= this.value
+  console.log(this.value)
+  obtenerTicketsRechazados(problematica)
+})
+
+$("#selectProblematicaAceptados").change(function(){
+  var problematica= this.value
+  console.log(this.value)
+  obtenerTicketsAceptados(problematica)
+})
+
+$("#selectProblemasAdmin").change(function(){
+  var problematica= this.value
+  console.log(this.value)
+  obtenerAdministrarTicket(problematica)
+})
+
+document.querySelector('.btn-outline-light').addEventListener('click', function(e) {
+      e.preventDefault();
+      Swal.fire({
+        title: '¿Estás seguro?',
+        text: "¿Deseas cerrar tu sesión?",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, cerrar sesión',
+        cancelButtonText: 'Cancelar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.href = "/";
+        }
+      });
+    });

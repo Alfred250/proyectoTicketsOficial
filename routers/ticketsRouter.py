@@ -21,7 +21,7 @@ def mostrar_pagina_creacion_ticket():
 @router.post("/registrarTicket",tags=["tickets"])
 def insertar_tickets(datos:Ticket):
     fecha_hoy=datetime.now().strftime("%Y-%m/-%d")
-    conexionTablaTickets.insertarTicket(datos.id_empleado,datos.asunto, datos.descripcion,1,fecha_hoy)
+    conexionTablaTickets.insertarTicket(datos.id_empleado,datos.asunto, datos.descripcion)
 
 
 
@@ -44,9 +44,9 @@ def mostrarTicketsAceptados(id_empleado:int):
     datos=conexionTablaTickets.ticketsAceptados(id_empleado)
     return JSONResponse(content=datos)
 
-@router.post("/ticketsAsignados", tags=["tickets"])
+@router.post("/EmpleadosAsignados", tags=["tickets"])
 def mostrarTicketsAsignados(datos: IdTicket):
-    resultado= conexionTablaTickets.ticketsAsignados(datos.id_ticket)
+    resultado= conexionTablaTickets.EmpleadosAsignados(datos.id_ticket)
     return JSONResponse(resultado)
 
 
@@ -76,3 +76,7 @@ def modificarSituacion(datos:SitucionModificar):
     resultado=conexionTablaTickets.modificarSituacion(datos.id_ticket,datos.situacion)
     return resultado
 
+@router.post('/consultarPuesto',tags=["ticket"])
+def consultar_puesto(datos:IdUsuario):
+    datos=conexionTablaTickets.consultarPuesto(datos.id_empleado)
+    return datos

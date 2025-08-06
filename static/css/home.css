@@ -46,7 +46,6 @@ h1, h2, h3, h4, h5 {
   transform: translateX(5px);
 }
 
-/* --- BOTONES --- */
 .btn-primary {
   background-color: var(--color-primario);
   border: none;
