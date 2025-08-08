@@ -1,0 +1,16 @@
+/* Asegura que el datepicker aparezca sobre otros elementos */
+  .daterangepicker {
+    z-index: 1051 !important; /* Mayor que el z-index de Bootstrap modals (1050) */
+    position: absolute !important;
+  }
+  
+  /* Contenedor principal sin overflow oculto */
+  #reporteTicketsOperativo {
+    overflow: visible !important;
+  }
+  
+  /* Contenedores específicos para los inputs */
+  .datepicker-container {
+    position: relative;
+    z-index: 1;
+  }

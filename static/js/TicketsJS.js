@@ -7,6 +7,33 @@ obtenerTicketsRechazados("ninguno");
 obtenerDiferentesProble();
 })
 
+document.addEventListener('DOMContentLoaded', function() {
+  const flatpickrOptions = {
+    mode: "range",
+    locale: "es",
+    dateFormat: "Y-m-d",
+    allowInput: true,
+    static: true, // Para mejor posicionamiento
+    monthSelectorType: "static",
+    onOpen: function() {
+      this.calendarContainer.style.zIndex = "99999";
+    }
+  };
+
+  // Inicializar ambos datepickers
+  flatpickr("#rangoFechasPromedio", flatpickrOptions);
+  flatpickr("#rangoFechas", flatpickrOptions);
+  
+  // Opcional: Mostrar fecha seleccionada en consola
+  document.getElementById("rangoFechasPromedio").addEventListener("change", function(e) {
+    console.log("Rango seleccionado (Promedio):", e.target.value);
+  });
+  
+  document.getElementById("rangoFechas").addEventListener("change", function(e) {
+    console.log("Rango seleccionado (Caducados):", e.target.value);
+  });
+});
+
 const id_empleado = parseInt(localStorage.getItem("idEmpleadoGlobal"));
 const id_empleado_Global=parseInt(localStorage.getItem("idEmpleadoGlobal"));
 function ocultar(){
@@ -607,45 +634,12 @@ function obtenerOperativoTicketsCaducados(fecha_inicio, fecha_fin){
 }
 
 
-$(function () {
-    $('#rangoFechas').daterangepicker({
-      locale: {
-        format: 'YYYY-MM-DD',
-        applyLabel: 'Aplicar',
-        cancelLabel: 'Cancelar',
-        fromLabel: 'Desde',
-        toLabel: 'Hasta',
-        customRangeLabel: 'Personalizado',
-        weekLabel: 'S',
-        daysOfWeek: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
-        monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-          'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-        firstDay: 1
-      },
-      opens: 'right'
-    });
-     $('#rangoFechasPromedio').daterangepicker({
-      locale: {
-        format: 'YYYY-MM-DD',
-        applyLabel: 'Aplicar',
-        cancelLabel: 'Cancelar',
-        fromLabel: 'Desde',
-        toLabel: 'Hasta',
-        customRangeLabel: 'Personalizado',
-        weekLabel: 'S',
-        daysOfWeek: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
-        monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-          'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-        firstDay: 1
-      },
-      opens: 'right'
-    });
-});
 
 $("#btnConsultarCaducados").click(function(){
   var rangoFechas= document.getElementById("rangoFechas");
   rangoFechas= rangoFechas.value
-  var nuevasFechas= rangoFechas.split(' - ')
+  var nuevasFechas= rangoFechas.split(' a ')
+  console.log(nuevasFechas)
   obtenerOperativoTicketsCaducados(nuevasFechas[0], nuevasFechas[1])
 })
 
@@ -670,6 +664,7 @@ function obtenerOperativoTiempoRespuesta(departamentore, fecha_inicio, fecha_fin
       }
       return response.json()
     }).then(respuesta=>{
+      console.log(respuesta)
       var bodyPromedioRespuesta= document.getElementById("bodyPromedioRespuesta")
       bodyPromedioRespuesta.innerHTML=`
         <tr>
@@ -686,9 +681,9 @@ function obtenerOperativoTiempoRespuesta(departamentore, fecha_inicio, fecha_fin
 }
 
 $("#btnConsultarPromedio").click(function(){
-  var rangoFechasPromedio= document.getElementById("rangoFechasPromedio");
-  rangoFechasPromedio= rangoFechasPromedio.value;
-  var nuevasFechas= rangoFechasPromedio.split(' - ')
+  var rangoFechasPromedio= document.getElementById("rangoFechasPromedio").value;
+  var nuevasFechas= rangoFechasPromedio.split(' a ')
+  console.log(nuevasFechas  )
   var selectDepartamentosPromedio= document.getElementById("selectDepartamentoPromedio").value
   var valorSeleccionado = parseInt(selectDepartamentosPromedio);
   console.log(valorSeleccionado)

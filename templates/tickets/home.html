@@ -15,6 +15,11 @@
   <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/index.global.min.css" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/index.global.min.js"></script>
   <!-- Font Awesome para iconos -->
+   <!-- Flatpickr CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<!-- Flatpickr JS y localización en español -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
@@ -375,7 +380,12 @@
                     <select class="form-select" id="selectDepartamentoPromedio">
                       <option selected disabled>Selecciona una opción</option>
                     </select>
-                    <input type="text" id="rangoFechasPromedio" class="form-control mb-2" />
+                    <div class="mb-3">
+                    <label for="rangoFechasPromedio" class="form-label">Rango de fechas</label>
+                    <input type="text" id="rangoFechasPromedio" class="form-control flatpickr-range" placeholder="Selecciona rango">
+                  </div>
+
+
                     <button id="btnConsultarPromedio" class="btn btn-primary mb-3">Consultar</button>
                     <div style="max-height: 300px; max-width:1000px; overflow-x: auto;">
                       <table class="table table-bordered table-striped">
@@ -397,7 +407,11 @@
                 <div class="row mt-2">
                   <div class="card text-center p-3">
                     <h1>Reporte mensual de tickets caducados  </h1>
-                    <input type="text" id="rangoFechas" class="form-control mb-2" />
+                    <div class="mb-3">
+                      <label for="rangoFechas" class="form-label">Rango de fechas</label>
+                      <input type="text" id="rangoFechas" class="form-control flatpickr-range" placeholder="Selecciona rango">
+                    </div>
+
                     <button id="btnConsultarCaducados" class="btn btn-primary mb-3">Consultar</button>
                     <div style="max-height: 300px; max-width:1000px;overflow-x: auto;">
                       <table class="table table-bordered table-striped">

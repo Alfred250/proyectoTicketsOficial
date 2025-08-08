@@ -559,15 +559,15 @@ class Base:
             tiemporespuesta=0
             resueltos= 0
             for i in datos:
-                    respuesta= i[1]
-                    solucion= i[2]
-                    respuesta= datetime.strptime(respuesta, '%Y-%m-%d %H:%M:%S')
-                    solucion= datetime.strptime(solucion, '%Y-%m-%d %H:%M:%S')
-                    inicio= datetime.strptime(fecha_inicio, '%Y-%m-%d')
-                    final= datetime.strptime(fecha_final, '%Y-%m-%d')
-                    if solucion > inicio and solucion < final :
-                            tiemporespuesta+= (solucion-respuesta).total_seconds() / 60  
-                            resueltos+=1
+                    respuesta = i[1]
+                    solucion = i[2]
+                    respuesta = datetime.strptime(respuesta.split('.')[0], '%Y-%m-%d %H:%M:%S') if '.' in respuesta else datetime.strptime(respuesta, '%Y-%m-%d %H:%M:%S')
+                    solucion = datetime.strptime(solucion.split('.')[0], '%Y-%m-%d %H:%M:%S') if '.' in solucion else datetime.strptime(solucion, '%Y-%m-%d %H:%M:%S')
+                    inicio = datetime.strptime(fecha_inicio, '%Y-%m-%d')
+                    final = datetime.strptime(fecha_final, '%Y-%m-%d')
+                    if solucion > inicio and solucion < final:
+                        tiemporespuesta += (solucion - respuesta).total_seconds() / 60  
+                        resueltos += 1
             print("Total del Tiempo de Respuesta: ", tiemporespuesta, " Minutos")  
             print("Total de Tickets Resueltos: ", resueltos)
             if(resueltos>0):

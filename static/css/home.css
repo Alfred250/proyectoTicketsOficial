@@ -148,3 +148,21 @@ h1, h2, h3, h4, h5 {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* Estilos para Flatpickr */
+.flatpickr-calendar {
+  z-index: 99999 !important;
+  font-family: inherit;
+}
+
+.flatpickr-input {
+  background-color: white !important;
+  cursor: pointer;
+}
+
+/* Asegurar que los contenedores no corten el calendario */
+#reporteTicketsOperativo,
+#reporteTicketsOperativo .container-fluid,
+#reporteTicketsOperativo .card {
+  overflow: visible !important;
+}
